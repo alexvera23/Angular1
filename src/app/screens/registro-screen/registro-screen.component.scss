@@ -1,0 +1,50 @@
+.register-container {
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px 0; // Agregamos padding vertical para que no se pegue
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    background-size: cover;
+    background-position: center;
+}
+
+.register-box {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 600px;
+}
+
+h2 {
+    font-family: 'NexaBold', sans-serif;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.btn-primary {
+    background-color: #003366;
+    border-color: #003366;
+}
+
+.btn-outline-primary {
+    border-color: #003366;
+    color: #003366;
+}
+
+.btn-outline-primary:hover {
+    background-color: #003366;
+    color: white;
+}
+
+a {
+    color: #003366;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

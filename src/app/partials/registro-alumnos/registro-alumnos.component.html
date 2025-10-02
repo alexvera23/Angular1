@@ -1,0 +1,131 @@
+<div class="wrapper p-md-4">
+    <form [formGroup]="alumnoForm" (ngSubmit)="registrar()">
+        <h3 class="title-user mb-4">Ingresa los datos del Alumno</h3>
+
+        <div class="mb-3">
+            <label for="matricula" class="form-label">ID/Matrícula</label>
+            <input type="text" id="matricula" class="form-control" formControlName="matricula"
+                placeholder="Escribe la matrícula">
+            <div *ngIf="alumnoForm.get('matricula')?.invalid && alumnoForm.get('matricula')?.touched"
+                class="invalid-feedback d-block">
+                La matrícula es requerida.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="first_name_alumno" class="form-label">Nombre(s)</label>
+            <input type="text" id="first_name_alumno" class="form-control" formControlName="first_name"
+                placeholder="Escribe el nombre">
+            <div *ngIf="alumnoForm.get('first_name')?.invalid && alumnoForm.get('first_name')?.touched"
+                class="invalid-feedback d-block">
+                El nombre es requerido.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="last_name_alumno" class="form-label">Apellidos</label>
+            <input type="text" id="last_name_alumno" class="form-control" formControlName="last_name"
+                placeholder="Escribe los apellidos">
+            <div *ngIf="alumnoForm.get('last_name')?.invalid && alumnoForm.get('last_name')?.touched"
+                class="invalid-feedback d-block">
+                Los apellidos son requeridos.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="email_alumno" class="form-label">Correo Electrónico</label>
+            <input type="email" id="email_alumno" class="form-control" formControlName="email"
+                placeholder="nombre@correo.com">
+            <div *ngIf="alumnoForm.get('email')?.touched && alumnoForm.get('email')?.errors"
+                class="invalid-feedback d-block">
+                <span *ngIf="alumnoForm.get('email')?.hasError('required')">El correo es requerido.</span>
+                <span *ngIf="alumnoForm.get('email')?.hasError('email')">El formato del correo es inválido.</span>
+            </div>
+        </div>
+
+        <div class="mb-3" *ngIf="!editar">
+            <label for="password_alumno" class="form-label">Contraseña</label>
+            <input type="password" id="password_alumno" class="form-control" formControlName="password"
+                placeholder="Mínimo 8 caracteres">
+            <div *ngIf="alumnoForm.get('password')?.touched && alumnoForm.get('password')?.errors"
+                class="invalid-feedback d-block">
+                <span *ngIf="alumnoForm.get('password')?.hasError('required')">La contraseña es requerida.</span>
+                <span *ngIf="alumnoForm.get('password')?.hasError('minlength')">Debe tener al menos 8
+                    caracteres.</span>
+            </div>
+        </div>
+
+        <div class="mb-3" *ngIf="!editar">
+            <label for="confirmar_password_alumno" class="form-label">Confirmar Contraseña</label>
+            <input type="password" id="confirmar_password_alumno" class="form-control"
+                formControlName="confirmar_password" placeholder="Repite la contraseña">
+            <div *ngIf="alumnoForm.get('confirmar_password')?.invalid && alumnoForm.get('confirmar_password')?.touched"
+                class="invalid-feedback d-block">
+                La confirmación es requerida.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="fecha_nacimiento_alumno" class="form-label">Fecha de Nacimiento</label>
+            <input type="date" id="fecha_nacimiento_alumno" class="form-control" formControlName="fecha_nacimiento">
+            <div *ngIf="alumnoForm.get('fecha_nacimiento')?.invalid && alumnoForm.get('fecha_nacimiento')?.touched"
+                class="invalid-feedback d-block">
+                La fecha de nacimiento es requerida.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="curp_alumno" class="form-label">CURP</label>
+            <input type="text" id="curp_alumno" class="form-control text-uppercase" formControlName="curp"
+                placeholder="Escribe el CURP" maxlength="18">
+            <div *ngIf="alumnoForm.get('curp')?.touched && alumnoForm.get('curp')?.errors"
+                class="invalid-feedback d-block">
+                <span *ngIf="alumnoForm.get('curp')?.hasError('required')">El CURP es requerido.</span>
+                <span *ngIf="alumnoForm.get('curp')?.hasError('pattern')">El formato del CURP es inválido.</span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="rfc_alumno" class="form-label">RFC</label>
+            <input type="text" id="rfc_alumno" class="form-control text-uppercase" formControlName="rfc"
+                placeholder="Escribe el RFC">
+            <div *ngIf="alumnoForm.get('rfc')?.touched && alumnoForm.get('rfc')?.errors"
+                class="invalid-feedback d-block">
+                <span *ngIf="alumnoForm.get('rfc')?.hasError('required')">El RFC es requerido.</span>
+                <span *ngIf="alumnoForm.get('rfc')?.hasError('minlength') || alumnoForm.get('rfc')?.hasError('maxlength')">Debe
+                    tener 12 o 13 caracteres.</span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="edad_alumno" class="form-label">Edad</label>
+            <input type="number" id="edad_alumno" class="form-control" formControlName="edad"
+                placeholder="Escribe la edad">
+            <div *ngIf="alumnoForm.get('edad')?.invalid && alumnoForm.get('edad')?.touched"
+                class="invalid-feedback d-block">
+                La edad es requerida.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="telefono_alumno" class="form-label">Teléfono</label>
+            <input type="tel" id="telefono_alumno" class="form-control" formControlName="telefono"
+                mask='(000) 000-0000' placeholder="(000) 000-0000">
+            <div *ngIf="alumnoForm.get('telefono')?.invalid && alumnoForm.get('telefono')?.touched"
+                class="invalid-feedback d-block">
+                El teléfono es requerido.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="ocupacion_alumno" class="form-label">Ocupación (Opcional)</label>
+            <input type="text" id="ocupacion_alumno" class="form-control" formControlName="ocupacion"
+                placeholder="Escribe la ocupación">
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mt-4">
+            <button class="btn btn-primary" type="submit">Registrar Alumno</button>
+        </div>
+    </form>
+</div>
+

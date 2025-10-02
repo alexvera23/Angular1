@@ -1,0 +1,14 @@
+/* Puedes ajustar estos estilos según el diseño de tu profesor o tus preferencias */
+.min-vh-100 {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f4f7f6; /* Un color de fondo suave */
+}
+
+.flex-grow-1 {
+  width: 100%;
+  max-width: 450px; /* Ancho máximo para el formulario */
+  padding: 2rem;
+}

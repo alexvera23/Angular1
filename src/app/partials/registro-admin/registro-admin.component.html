@@ -1,0 +1,103 @@
+<div class="wrapper p-md-4">
+  <form [formGroup]="adminForm" (ngSubmit)="registrar()">
+    <h3 class="title-user mb-4">Ingresa los datos del administrador</h3>
+
+    <!-- ID de administrador -->
+    <div class="mb-3">
+      <label for="clave_admin" class="form-label">ID de administrador</label>
+      <input type="text" id="clave_admin" class="form-control" formControlName="clave_admin" placeholder="Escribe la clave">
+    </div>
+
+    <!-- Ocupación -->
+    <div class="mb-3">
+      <label for="ocupacion" class="form-label">Ocupación</label>
+      <input type="text" id="ocupacion" class="form-control" formControlName="ocupacion" placeholder="Escribe la ocupación">
+      <div *ngIf="adminForm.get('ocupacion')?.invalid && adminForm.get('ocupacion')?.touched" class="invalid-feedback d-block">
+        La ocupación es requerida.
+      </div>
+    </div>
+
+    <!-- Nombre -->
+    <div class="mb-3">
+      <label for="first_name" class="form-label">Nombre(s)</label>
+      <input type="text" id="first_name" class="form-control" formControlName="first_name" placeholder="Escribe el nombre" (keypress)="soloLetras($event)">
+      <div *ngIf="adminForm.get('first_name')?.invalid && adminForm.get('first_name')?.touched" class="invalid-feedback d-block">
+        El nombre es requerido.
+      </div>
+    </div>
+
+    <!-- Apellidos -->
+    <div class="mb-3">
+      <label for="last_name" class="form-label">Apellidos</label>
+      <input type="text" id="last_name" class="form-control" formControlName="last_name" placeholder="Escribe los apellidos" (keypress)="soloLetras($event)">
+      <div *ngIf="adminForm.get('last_name')?.invalid && adminForm.get('last_name')?.touched" class="invalid-feedback d-block">
+        Los apellidos son requeridos.
+      </div>
+    </div>
+
+    <!-- Correo electrónico -->
+    <div class="mb-3">
+      <label for="email" class="form-label">Correo electrónico</label>
+      <input type="email" id="email" class="form-control" formControlName="email" placeholder="nombre@correo.com" [attr.disabled]="editar ? true : null">
+       <div *ngIf="adminForm.get('email')?.touched && adminForm.get('email')?.errors" class="invalid-feedback d-block">
+        <span *ngIf="adminForm.get('email')?.hasError('required')">El correo es requerido.</span>
+        <span *ngIf="adminForm.get('email')?.hasError('email')">El formato del correo es inválido.</span>
+      </div>
+    </div>
+
+    <!-- Contraseña (solo si no se edita) -->
+    <div class="mb-3" *ngIf="!editar">
+      <label for="password" class="form-label">Contraseña</label>
+      <input type="password" id="password" class="form-control" formControlName="password" placeholder="Mínimo 8 caracteres">
+       <div *ngIf="adminForm.get('password')?.touched && adminForm.get('password')?.errors" class="invalid-feedback d-block">
+        <span *ngIf="adminForm.get('password')?.hasError('required')">La contraseña es requerida.</span>
+        <span *ngIf="adminForm.get('password')?.hasError('minlength')">Debe tener al menos 8 caracteres.</span>
+      </div>
+    </div>
+
+    <!-- Confirmar contraseña (solo si no se edita) -->
+    <div class="mb-3" *ngIf="!editar">
+      <label for="confirmar_password" class="form-label">Confirmar contraseña</label>
+      <input type="password" id="confirmar_password" class="form-control" formControlName="confirmar_password" placeholder="Repite la contraseña">
+       <div *ngIf="adminForm.get('confirmar_password')?.invalid && adminForm.get('confirmar_password')?.touched" class="invalid-feedback d-block">
+        La confirmación es requerida.
+      </div>
+    </div>
+
+    <!-- Teléfono -->
+    <div class="mb-3">
+      <label for="telefono" class="form-label">Teléfono</label>
+      <input type="tel" id="telefono" class="form-control" formControlName="telefono" placeholder="(000) 000-0000">
+      <div *ngIf="adminForm.get('telefono')?.invalid && adminForm.get('telefono')?.touched" class="invalid-feedback d-block">
+        El teléfono es requerido.
+      </div>
+    </div>
+
+    <!-- RFC -->
+    <div class="mb-3">
+      <label for="rfc" class="form-label">RFC</label>
+      <input type="text" id="rfc" class="form-control text-uppercase" formControlName="rfc" placeholder="Escribe el RFC">
+       <div *ngIf="adminForm.get('rfc')?.touched && adminForm.get('rfc')?.errors" class="invalid-feedback d-block">
+          <span *ngIf="adminForm.get('rfc')?.hasError('required')">El RFC es requerido.</span>
+          <span *ngIf="adminForm.get('rfc')?.hasError('minlength') || adminForm.get('rfc')?.hasError('maxlength')">Debe tener 12 o 13 caracteres.</span>
+        </div>
+    </div>
+
+    <!-- Edad -->
+    <div class="mb-3">
+      <label for="edad" class="form-label">Edad</label>
+      <input type="number" id="edad" class="form-control" formControlName="edad" placeholder="Escribe la edad">
+      <div *ngIf="adminForm.get('edad')?.invalid && adminForm.get('edad')?.touched" class="invalid-feedback d-block">
+        La edad es requerida.
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button class="btn btn-secondary" type="button" (click)="regresar()">Cancelar</button>
+      <button *ngIf="!editar" class="btn btn-primary" type="submit">Registrar</button>
+      <button *ngIf="editar" class="btn btn-primary" type="button" (click)="actualizar()">Actualizar</button>
+    </div>
+  </form>
+</div>
+

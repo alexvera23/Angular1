@@ -1,0 +1,46 @@
+<div class="register-container">
+  <div class="register-box">
+    <div class="text-center">
+      <h2>Registro de Usuarios</h2>
+      <p>Selecciona el tipo de usuario que deseas registrar</p>
+      <hr>
+    </div>
+
+    <div class="btn-group w-100 mb-4" role="group">
+      <button
+        type="button"
+        class="btn"
+        [class.btn-primary]="tipo_usuario === 'administrador'"
+        [class.btn-outline-primary]="tipo_usuario !== 'administrador'"
+        (click)="selectOption('administrador')">
+        Administrador
+      </button>
+      <button
+        type="button"
+        class="btn"
+        [class.btn-primary]="tipo_usuario === 'maestro'"
+        [class.btn-outline-primary]="tipo_usuario !== 'maestro'"
+        (click)="selectOption('maestro')">
+        Maestro
+      </button>
+      <button
+        type="button"
+        class="btn"
+        [class.btn-primary]="tipo_usuario === 'alumno'"
+        [class.btn-outline-primary]="tipo_usuario !== 'alumno'"
+        (click)="selectOption('alumno')">
+        Alumno
+      </button>
+    </div>
+
+    <div [ngSwitch]="tipo_usuario">
+      <app-registro-admin *ngSwitchCase="'administrador'"></app-registro-admin>
+      <app-registro-profesores *ngSwitchCase="'maestro'"></app-registro-profesores>
+      <app-registro-alumnos *ngSwitchCase="'alumno'"></app-registro-alumnos>
+    </div>
+
+    <div class="mt-3 text-center">
+      <a routerLink="/login">¿Ya tienes una cuenta? Inicia Sesión</a>
+    </div>
+  </div>
+</div>
