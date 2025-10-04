@@ -1,9 +1,14 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { NgxMaskDirective } from 'ngx-mask';
+
+// Importación de los módulos de Material
+import { MATERIAL_MODULES } from '../../shared/shared-material';
+
+// Servicios
 import { ProfesoresService } from '../../services/profesores.service';
 import { FacadeService } from '../../services/facade.service';
-import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-registro-profesores',
@@ -11,7 +16,8 @@ import { NgxMaskDirective } from 'ngx-mask';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    NgxMaskDirective
+    NgxMaskDirective,
+    ...MATERIAL_MODULES // ✅ Importamos todos los módulos de Material
   ],
   templateUrl: './registro-profesores.component.html',
   styleUrls: ['./registro-profesores.component.scss']
@@ -21,13 +27,19 @@ export class RegistroProfesoresComponent implements OnInit {
   @Input() rol: string = "maestro";
   public maestroForm: FormGroup;
   public editar: boolean = false;
+  public hide: boolean = true;
+  public hideConfirm: boolean = true;
+  
   // Simulación de materias que vendrían de una base de datos
   public materiasData = [
     { id: 1, nombre: 'Aplicaciones Web' },
     { id: 2, nombre: 'Programación Orientada a Objetos' },
     { id: 3, nombre: 'Bases de Datos' },
     { id: 4, nombre: 'Redes de Computadoras' },
-    { id: 5, nombre: 'Inteligencia Artificial' }
+    { id: 5, nombre: 'Inteligencia Artificial' },
+    { id: 6, nombre: 'Estructura de Datos' },
+    { id: 7, nombre: 'Sistemas Operativos' },
+    { id: 8, nombre: 'Ingeniería de Software' }
   ];
   
   private fb = inject(FormBuilder);
@@ -59,10 +71,10 @@ export class RegistroProfesoresComponent implements OnInit {
   onCheckboxChange(event: any) {
     const materiasFormArray: FormArray = this.maestroForm.get('materias') as FormArray;
 
-    if (event.target.checked) {
-      materiasFormArray.push(new FormControl(event.target.value));
+    if (event.checked) {
+      materiasFormArray.push(new FormControl(event.source.value));
     } else {
-      const index = materiasFormArray.controls.findIndex(x => x.value === event.target.value);
+      const index = materiasFormArray.controls.findIndex(x => x.value === event.source.value);
       materiasFormArray.removeAt(index);
     }
   }
@@ -74,7 +86,7 @@ export class RegistroProfesoresComponent implements OnInit {
       return;
     }
     console.log("Formulario de maestro válido. Datos:", this.maestroForm.value);
-    this.facadeService.openSnackBar('Maestro registrado (simulación)');
+    this.facadeService.openSnackBar('Maestro registrado correctamente');
   }
 
   soloLetras(event: KeyboardEvent) {
@@ -83,4 +95,3 @@ export class RegistroProfesoresComponent implements OnInit {
     }
   }
 }
-

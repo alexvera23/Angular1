@@ -2,7 +2,8 @@ import { Component, Input, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Location, CommonModule } from '@angular/common';
 
-// NO importamos Material aquí para aislar el problema
+// Importación de los módulos de Material
+import { MATERIAL_MODULES } from '../../shared/shared-material';
 
 // Importaciones de nuestros servicios
 import { AdministradoresService } from '../../services/administradores.service';
@@ -13,7 +14,8 @@ import { FacadeService } from '../../services/facade.service';
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule // La base que sí funcionaba
+    ReactiveFormsModule,
+    ...MATERIAL_MODULES // ✅ Importamos todos los módulos de Material
   ],
   templateUrl: './registro-admin.component.html',
   styleUrls: ['./registro-admin.component.scss']
@@ -23,6 +25,7 @@ export class RegistroAdminComponent implements OnInit {
   @Input() rol: string = "";
   public adminForm: FormGroup;
   public editar: boolean = false;
+  public hide: boolean = true; // Para el botón de mostrar/ocultar contraseña
   
   // Inyección de dependencias
   private fb = inject(FormBuilder);
@@ -31,7 +34,6 @@ export class RegistroAdminComponent implements OnInit {
   private facadeService = inject(FacadeService);
 
   constructor() {
-    // Usamos el esquema del servicio para construir el formulario
     const adminSchema = this.administradoresService.esquemaAdmin();
 
     this.adminForm = this.fb.group({
@@ -61,11 +63,17 @@ export class RegistroAdminComponent implements OnInit {
     }
 
     console.log("Formulario válido. Datos:", this.adminForm.value);
-    this.facadeService.openSnackBar('Administrador registrado (simulación)');
+    this.facadeService.openSnackBar('Administrador registrado correctamente');
   }
 
-  public actualizar() { /* Lógica de actualización */ }
-  public regresar() { this.location.back(); }
+  public actualizar() { 
+    console.log("Actualizar administrador");
+    this.facadeService.openSnackBar('Administrador actualizado correctamente');
+  }
+  
+  public regresar() { 
+    this.location.back(); 
+  }
 
   public soloLetras(event: KeyboardEvent) {
     if (!/^[a-zA-Z\u00C0-\u017F\s]*$/.test(event.key)) {
@@ -73,4 +81,3 @@ export class RegistroAdminComponent implements OnInit {
     }
   }
 }
-

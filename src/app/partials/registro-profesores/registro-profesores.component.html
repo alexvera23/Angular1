@@ -1,112 +1,168 @@
-<div class="wrapper p-md-4">
-  <form [formGroup]="maestroForm" (ngSubmit)="registrar()">
-    <h3 class="title-user mb-4">Ingresa los datos del Profesor</h3>
+<div class="wrapper p-3">
+  <mat-card class="profesor-card">
+    <mat-card-content>
+      <form [formGroup]="maestroForm" (ngSubmit)="registrar()">
+        <h3 class="title-user mb-4">Ingresa los datos del Profesor</h3>
+        <mat-divider class="mb-4"></mat-divider>
 
-    <div class="mb-3">
-      <label for="n_empleado" class="form-label">ID de Trabajador</label>
-      <input type="text" id="n_empleado" class="form-control" formControlName="n_empleado" placeholder="Escribe el No. de Empleado">
-      <div *ngIf="maestroForm.get('n_empleado')?.invalid && maestroForm.get('n_empleado')?.touched" class="invalid-feedback d-block">
-        El No. de Empleado es requerido.
-      </div>
-    </div>
+        <!-- ID de Trabajador -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label>ID de Trabajador</mat-label>
+          <input matInput type="text" formControlName="n_empleado" placeholder="Escribe el No. de Empleado">
+          <mat-icon matPrefix>badge</mat-icon>
+          <mat-error *ngIf="maestroForm.get('n_empleado')?.hasError('required')">
+            El No. de Empleado es requerido
+          </mat-error>
+        </mat-form-field>
 
-    <div class="mb-3">
-      <label for="first_name_maestro" class="form-label">Nombre(s)</label>
-      <input type="text" id="first_name_maestro" class="form-control" formControlName="first_name" placeholder="Escribe el nombre" (keypress)="soloLetras($event)">
-      <div *ngIf="maestroForm.get('first_name')?.invalid && maestroForm.get('first_name')?.touched" class="invalid-feedback d-block">
-        El nombre es requerido.
-      </div>
-    </div>
+        <!-- Nombre -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label>Nombre(s)</mat-label>
+          <input matInput type="text" formControlName="first_name" 
+                 placeholder="Escribe el nombre" 
+                 (keypress)="soloLetras($event)">
+          <mat-icon matPrefix>person</mat-icon>
+          <mat-error *ngIf="maestroForm.get('first_name')?.hasError('required')">
+            El nombre es requerido
+          </mat-error>
+        </mat-form-field>
 
-    <div class="mb-3">
-      <label for="last_name_maestro" class="form-label">Apellidos</label>
-      <input type="text" id="last_name_maestro" class="form-control" formControlName="last_name" placeholder="Escribe los apellidos" (keypress)="soloLetras($event)">
-       <div *ngIf="maestroForm.get('last_name')?.invalid && maestroForm.get('last_name')?.touched" class="invalid-feedback d-block">
-        Los apellidos son requeridos.
-      </div>
-    </div>
+        <!-- Apellidos -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label>Apellidos</mat-label>
+          <input matInput type="text" formControlName="last_name" 
+                 placeholder="Escribe los apellidos" 
+                 (keypress)="soloLetras($event)">
+          <mat-icon matPrefix>person_outline</mat-icon>
+          <mat-error *ngIf="maestroForm.get('last_name')?.hasError('required')">
+            Los apellidos son requeridos
+          </mat-error>
+        </mat-form-field>
 
-    <div class="mb-3">
-      <label for="email_maestro" class="form-label">Correo Electrónico</label>
-      <input type="email" id="email_maestro" class="form-control" formControlName="email" placeholder="nombre@correo.com">
-      <div *ngIf="maestroForm.get('email')?.touched && maestroForm.get('email')?.errors" class="invalid-feedback d-block">
-        <span *ngIf="maestroForm.get('email')?.hasError('required')">El correo es requerido.</span>
-        <span *ngIf="maestroForm.get('email')?.hasError('email')">El formato es inválido.</span>
-      </div>
-    </div>
+        <!-- Correo Electrónico -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label>Correo Electrónico</mat-label>
+          <input matInput type="email" formControlName="email" placeholder="nombre@correo.com">
+          <mat-icon matPrefix>email</mat-icon>
+          <mat-error *ngIf="maestroForm.get('email')?.hasError('required')">
+            El correo es requerido
+          </mat-error>
+          <mat-error *ngIf="maestroForm.get('email')?.hasError('email')">
+            El formato es inválido
+          </mat-error>
+        </mat-form-field>
 
-    <div class="mb-3" *ngIf="!editar">
-      <label for="password_maestro" class="form-label">Contraseña</label>
-      <input type="password" id="password_maestro" class="form-control" formControlName="password" placeholder="Mínimo 8 caracteres">
-       <div *ngIf="maestroForm.get('password')?.touched && maestroForm.get('password')?.errors" class="invalid-feedback d-block">
-        <span *ngIf="maestroForm.get('password')?.hasError('required')">La contraseña es requerida.</span>
-        <span *ngIf="maestroForm.get('password')?.hasError('minlength')">Debe tener al menos 8 caracteres.</span>
-      </div>
-    </div>
+        <!-- Contraseña (solo si no se edita) -->
+        <mat-form-field appearance="outline" class="w-100 mb-2" *ngIf="!editar">
+          <mat-label>Contraseña</mat-label>
+          <input matInput [type]="hide ? 'password' : 'text'" 
+                 formControlName="password" 
+                 placeholder="Mínimo 8 caracteres">
+          <mat-icon matPrefix>lock</mat-icon>
+          <button mat-icon-button matSuffix type="button" (click)="hide = !hide">
+            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-error *ngIf="maestroForm.get('password')?.hasError('required')">
+            La contraseña es requerida
+          </mat-error>
+          <mat-error *ngIf="maestroForm.get('password')?.hasError('minlength')">
+            Debe tener al menos 8 caracteres
+          </mat-error>
+        </mat-form-field>
 
-    <div class="mb-3" *ngIf="!editar">
-      <label for="confirmar_password_maestro" class="form-label">Confirmar Contraseña</label>
-      <input type="password" id="confirmar_password_maestro" class="form-control" formControlName="confirmar_password" placeholder="Repite la contraseña">
-      <div *ngIf="maestroForm.get('confirmar_password')?.invalid && maestroForm.get('confirmar_password')?.touched" class="invalid-feedback d-block">
-        La confirmación es requerida.
-      </div>
-    </div>
-    
-    <div class="mb-3">
-        <label for="fecha_nacimiento_maestro" class="form-label">Fecha de Nacimiento</label>
-        <input type="date" id="fecha_nacimiento_maestro" class="form-control" formControlName="fecha_nacimiento">
-        <div *ngIf="maestroForm.get('fecha_nacimiento')?.invalid && maestroForm.get('fecha_nacimiento')?.touched" class="invalid-feedback d-block">
-            La fecha de nacimiento es requerida.
-        </div>
-    </div>
+        <!-- Confirmar Contraseña (solo si no se edita) -->
+        <mat-form-field appearance="outline" class="w-100 mb-2" *ngIf="!editar">
+          <mat-label>Confirmar Contraseña</mat-label>
+          <input matInput [type]="hideConfirm ? 'password' : 'text'" 
+                 formControlName="confirmar_password" 
+                 placeholder="Repite la contraseña">
+          <mat-icon matPrefix>lock_outline</mat-icon>
+          <button mat-icon-button matSuffix type="button" (click)="hideConfirm = !hideConfirm">
+            <mat-icon>{{hideConfirm ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-error *ngIf="maestroForm.get('confirmar_password')?.hasError('required')">
+            La confirmación es requerida
+          </mat-error>
+        </mat-form-field>
 
-    <div class="mb-3">
-        <label for="telefono_maestro" class="form-label">Teléfono</label>
-        <input type="tel" id="telefono_maestro" class="form-control" formControlName="telefono" mask='(000) 000-0000' placeholder="(000) 000-0000">
-         <div *ngIf="maestroForm.get('telefono')?.invalid && maestroForm.get('telefono')?.touched" class="invalid-feedback d-block">
-            El teléfono es requerido.
-        </div>
-    </div>
+        <!-- Fecha de Nacimiento -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label>Fecha de Nacimiento</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="fecha_nacimiento">
+          <mat-icon matPrefix>cake</mat-icon>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="maestroForm.get('fecha_nacimiento')?.hasError('required')">
+            La fecha de nacimiento es requerida
+          </mat-error>
+        </mat-form-field>
 
-    <div class="mb-3">
-        <label for="cubiculo" class="form-label">Cubículo</label>
-        <input type="text" id="cubiculo" class="form-control" formControlName="cubiculo" placeholder="Escribe el cubículo">
-        <div *ngIf="maestroForm.get('cubiculo')?.invalid && maestroForm.get('cubiculo')?.touched" class="invalid-feedback d-block">
-            El cubículo es requerido.
-        </div>
-    </div>
+        <!-- Teléfono -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label>Teléfono</mat-label>
+          <input matInput type="tel" formControlName="telefono" 
+                 mask='(000) 000-0000' 
+                 placeholder="(000) 000-0000">
+          <mat-icon matPrefix>phone</mat-icon>
+          <mat-error *ngIf="maestroForm.get('telefono')?.hasError('required')">
+            El teléfono es requerido
+          </mat-error>
+        </mat-form-field>
 
-    <div class="mb-3">
-      <label for="area_investigacion" class="form-label">Área de Investigación</label>
-      <input type="text" id="area_investigacion" class="form-control" formControlName="area_investigacion" placeholder="Escribe el área de investigación">
-      <div *ngIf="maestroForm.get('area_investigacion')?.invalid && maestroForm.get('area_investigacion')?.touched" class="invalid-feedback d-block">
-        El área de investigación es requerida.
-      </div>
-    </div>
+        <!-- Cubículo -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label>Cubículo</mat-label>
+          <input matInput type="text" formControlName="cubiculo" placeholder="Escribe el cubículo">
+          <mat-icon matPrefix>meeting_room</mat-icon>
+          <mat-error *ngIf="maestroForm.get('cubiculo')?.hasError('required')">
+            El cubículo es requerido
+          </mat-error>
+        </mat-form-field>
 
-    <div class="mb-3">
-      <label class="form-label">Selecciona las materias a impartir</label>
-      <div class="materias-container p-3 border rounded">
-        <div *ngFor="let materia of materiasData" class="form-check">
-          <input 
-            class="form-check-input" 
-            type="checkbox" 
-            [value]="materia.id"
-            id="materia-{{materia.id}}"
-            (change)="onCheckboxChange($event)">
-          <label class="form-check-label" for="materia-{{materia.id}}">
-            {{ materia.nombre }}
+        <!-- Área de Investigación -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label>Área de Investigación</mat-label>
+          <input matInput type="text" formControlName="area_investigacion" 
+                 placeholder="Escribe el área de investigación">
+          <mat-icon matPrefix>science</mat-icon>
+          <mat-error *ngIf="maestroForm.get('area_investigacion')?.hasError('required')">
+            El área de investigación es requerida
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Materias a Impartir -->
+        <div class="materias-section mb-3">
+          <label class="materias-label">
+            <mat-icon class="label-icon">school</mat-icon>
+            Selecciona las materias a impartir
           </label>
+          <mat-card class="materias-card">
+            <mat-card-content class="materias-content">
+              <div class="row">
+                <div *ngFor="let materia of materiasData" class="col-12 col-md-6 mb-2">
+                  <mat-checkbox 
+                    [value]="materia.id.toString()"
+                    (change)="onCheckboxChange($event)"
+                    color="primary">
+                    {{ materia.nombre }}
+                  </mat-checkbox>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+          <div *ngIf="maestroForm.get('materias')?.invalid && maestroForm.get('materias')?.touched" 
+               class="mat-error mt-2">
+            Debes seleccionar al menos una materia
+          </div>
         </div>
-      </div>
-      <div *ngIf="maestroForm.get('materias')?.invalid && maestroForm.get('materias')?.touched" class="invalid-feedback d-block">
-          Debes seleccionar al menos una materia.
-      </div>
-    </div>
 
-    <div class="d-flex justify-content-end gap-2 mt-4">
-      <button class="btn btn-primary" type="submit">Registrar Profesor</button>
-    </div>
-  </form>
-</div>
-
+        <!-- Botones -->
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <button mat-raised-button color="primary" type="submit">
+            <mat-icon>save</mat-icon>
+            Registrar Profesor
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  

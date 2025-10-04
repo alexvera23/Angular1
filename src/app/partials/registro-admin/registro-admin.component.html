@@ -1,103 +1,148 @@
-<div class="wrapper p-md-4">
-  <form [formGroup]="adminForm" (ngSubmit)="registrar()">
-    <h3 class="title-user mb-4">Ingresa los datos del administrador</h3>
+<div class="wrapper p-3">
+  <mat-card class="admin-card">
+    <mat-card-content>
+      <form [formGroup]="adminForm" (ngSubmit)="registrar()">
+        <h3 class="title-user mb-4">Ingresa los datos del administrador</h3>
+        <mat-divider class="mb-4"></mat-divider>
 
-    <!-- ID de administrador -->
-    <div class="mb-3">
-      <label for="clave_admin" class="form-label">ID de administrador</label>
-      <input type="text" id="clave_admin" class="form-control" formControlName="clave_admin" placeholder="Escribe la clave">
-    </div>
+        <!-- ID de administrador -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label>ID de administrador</mat-label>
+          <input matInput type="text" formControlName="clave_admin" placeholder="Escribe la clave">
+          <mat-icon matPrefix>badge</mat-icon>
+        </mat-form-field>
 
-    <!-- Ocupación -->
-    <div class="mb-3">
-      <label for="ocupacion" class="form-label">Ocupación</label>
-      <input type="text" id="ocupacion" class="form-control" formControlName="ocupacion" placeholder="Escribe la ocupación">
-      <div *ngIf="adminForm.get('ocupacion')?.invalid && adminForm.get('ocupacion')?.touched" class="invalid-feedback d-block">
-        La ocupación es requerida.
-      </div>
-    </div>
+        <!-- Ocupación -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label>Ocupación</mat-label>
+          <input matInput type="text" formControlName="ocupacion" placeholder="Escribe la ocupación">
+          <mat-icon matPrefix>work</mat-icon>
+          <mat-error *ngIf="adminForm.get('ocupacion')?.hasError('required')">
+            La ocupación es requerida
+          </mat-error>
+        </mat-form-field>
 
-    <!-- Nombre -->
-    <div class="mb-3">
-      <label for="first_name" class="form-label">Nombre(s)</label>
-      <input type="text" id="first_name" class="form-control" formControlName="first_name" placeholder="Escribe el nombre" (keypress)="soloLetras($event)">
-      <div *ngIf="adminForm.get('first_name')?.invalid && adminForm.get('first_name')?.touched" class="invalid-feedback d-block">
-        El nombre es requerido.
-      </div>
-    </div>
+        <!-- Nombre -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label>Nombre(s)</mat-label>
+          <input matInput type="text" formControlName="first_name" 
+                 placeholder="Escribe el nombre" 
+                 (keypress)="soloLetras($event)">
+          <mat-icon matPrefix>person</mat-icon>
+          <mat-error *ngIf="adminForm.get('first_name')?.hasError('required')">
+            El nombre es requerido
+          </mat-error>
+        </mat-form-field>
 
-    <!-- Apellidos -->
-    <div class="mb-3">
-      <label for="last_name" class="form-label">Apellidos</label>
-      <input type="text" id="last_name" class="form-control" formControlName="last_name" placeholder="Escribe los apellidos" (keypress)="soloLetras($event)">
-      <div *ngIf="adminForm.get('last_name')?.invalid && adminForm.get('last_name')?.touched" class="invalid-feedback d-block">
-        Los apellidos son requeridos.
-      </div>
-    </div>
+        <!-- Apellidos -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label>Apellidos</mat-label>
+          <input matInput type="text" formControlName="last_name" 
+                 placeholder="Escribe los apellidos" 
+                 (keypress)="soloLetras($event)">
+          <mat-icon matPrefix>person_outline</mat-icon>
+          <mat-error *ngIf="adminForm.get('last_name')?.hasError('required')">
+            Los apellidos son requeridos
+          </mat-error>
+        </mat-form-field>
 
-    <!-- Correo electrónico -->
-    <div class="mb-3">
-      <label for="email" class="form-label">Correo electrónico</label>
-      <input type="email" id="email" class="form-control" formControlName="email" placeholder="nombre@correo.com" [attr.disabled]="editar ? true : null">
-       <div *ngIf="adminForm.get('email')?.touched && adminForm.get('email')?.errors" class="invalid-feedback d-block">
-        <span *ngIf="adminForm.get('email')?.hasError('required')">El correo es requerido.</span>
-        <span *ngIf="adminForm.get('email')?.hasError('email')">El formato del correo es inválido.</span>
-      </div>
-    </div>
+        <!-- Correo electrónico -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label>Correo electrónico</mat-label>
+          <input matInput type="email" formControlName="email" 
+                 placeholder="nombre@correo.com"
+                 [attr.disabled]="editar ? true : null">
+          <mat-icon matPrefix>email</mat-icon>
+          <mat-error *ngIf="adminForm.get('email')?.hasError('required')">
+            El correo es requerido
+          </mat-error>
+          <mat-error *ngIf="adminForm.get('email')?.hasError('email')">
+            El formato del correo es inválido
+          </mat-error>
+        </mat-form-field>
 
-    <!-- Contraseña (solo si no se edita) -->
-    <div class="mb-3" *ngIf="!editar">
-      <label for="password" class="form-label">Contraseña</label>
-      <input type="password" id="password" class="form-control" formControlName="password" placeholder="Mínimo 8 caracteres">
-       <div *ngIf="adminForm.get('password')?.touched && adminForm.get('password')?.errors" class="invalid-feedback d-block">
-        <span *ngIf="adminForm.get('password')?.hasError('required')">La contraseña es requerida.</span>
-        <span *ngIf="adminForm.get('password')?.hasError('minlength')">Debe tener al menos 8 caracteres.</span>
-      </div>
-    </div>
+        <!-- Contraseña (solo si no se edita) -->
+        <mat-form-field appearance="outline" class="w-100 mb-2" *ngIf="!editar">
+          <mat-label>Contraseña</mat-label>
+          <input matInput [type]="hide ? 'password' : 'text'" 
+                 formControlName="password" 
+                 placeholder="Mínimo 8 caracteres">
+          <mat-icon matPrefix>lock</mat-icon>
+          <button mat-icon-button matSuffix type="button" (click)="hide = !hide">
+            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-error *ngIf="adminForm.get('password')?.hasError('required')">
+            La contraseña es requerida
+          </mat-error>
+          <mat-error *ngIf="adminForm.get('password')?.hasError('minlength')">
+            Debe tener al menos 8 caracteres
+          </mat-error>
+        </mat-form-field>
 
-    <!-- Confirmar contraseña (solo si no se edita) -->
-    <div class="mb-3" *ngIf="!editar">
-      <label for="confirmar_password" class="form-label">Confirmar contraseña</label>
-      <input type="password" id="confirmar_password" class="form-control" formControlName="confirmar_password" placeholder="Repite la contraseña">
-       <div *ngIf="adminForm.get('confirmar_password')?.invalid && adminForm.get('confirmar_password')?.touched" class="invalid-feedback d-block">
-        La confirmación es requerida.
-      </div>
-    </div>
+        <!-- Confirmar contraseña (solo si no se edita) -->
+        <mat-form-field appearance="outline" class="w-100 mb-2" *ngIf="!editar">
+          <mat-label>Confirmar contraseña</mat-label>
+          <input matInput type="password" formControlName="confirmar_password" 
+                 placeholder="Repite la contraseña">
+          <mat-icon matPrefix>lock_outline</mat-icon>
+          <mat-error *ngIf="adminForm.get('confirmar_password')?.hasError('required')">
+            La confirmación es requerida
+          </mat-error>
+        </mat-form-field>
 
-    <!-- Teléfono -->
-    <div class="mb-3">
-      <label for="telefono" class="form-label">Teléfono</label>
-      <input type="tel" id="telefono" class="form-control" formControlName="telefono" placeholder="(000) 000-0000">
-      <div *ngIf="adminForm.get('telefono')?.invalid && adminForm.get('telefono')?.touched" class="invalid-feedback d-block">
-        El teléfono es requerido.
-      </div>
-    </div>
+        <!-- Teléfono -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label>Teléfono</mat-label>
+          <input matInput type="tel" formControlName="telefono" 
+                 placeholder="(000) 000-0000">
+          <mat-icon matPrefix>phone</mat-icon>
+          <mat-error *ngIf="adminForm.get('telefono')?.hasError('required')">
+            El teléfono es requerido
+          </mat-error>
+        </mat-form-field>
 
-    <!-- RFC -->
-    <div class="mb-3">
-      <label for="rfc" class="form-label">RFC</label>
-      <input type="text" id="rfc" class="form-control text-uppercase" formControlName="rfc" placeholder="Escribe el RFC">
-       <div *ngIf="adminForm.get('rfc')?.touched && adminForm.get('rfc')?.errors" class="invalid-feedback d-block">
-          <span *ngIf="adminForm.get('rfc')?.hasError('required')">El RFC es requerido.</span>
-          <span *ngIf="adminForm.get('rfc')?.hasError('minlength') || adminForm.get('rfc')?.hasError('maxlength')">Debe tener 12 o 13 caracteres.</span>
+        <!-- RFC -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label>RFC</mat-label>
+          <input matInput type="text" formControlName="rfc" 
+                 placeholder="Escribe el RFC"
+                 class="text-uppercase">
+          <mat-icon matPrefix>description</mat-icon>
+          <mat-error *ngIf="adminForm.get('rfc')?.hasError('required')">
+            El RFC es requerido
+          </mat-error>
+          <mat-error *ngIf="adminForm.get('rfc')?.hasError('minlength') || adminForm.get('rfc')?.hasError('maxlength')">
+            Debe tener 12 o 13 caracteres
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Edad -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label>Edad</mat-label>
+          <input matInput type="number" formControlName="edad" 
+                 placeholder="Escribe la edad">
+          <mat-icon matPrefix>calendar_today</mat-icon>
+          <mat-error *ngIf="adminForm.get('edad')?.hasError('required')">
+            La edad es requerida
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <button mat-raised-button color="warn" type="button" (click)="regresar()">
+            <mat-icon>arrow_back</mat-icon>
+            Cancelar
+          </button>
+          <button mat-raised-button color="primary" type="submit" *ngIf="!editar">
+            <mat-icon>save</mat-icon>
+            Registrar
+          </button>
+          <button mat-raised-button color="primary" type="button" (click)="actualizar()" *ngIf="editar">
+            <mat-icon>update</mat-icon>
+            Actualizar
+          </button>
         </div>
-    </div>
-
-    <!-- Edad -->
-    <div class="mb-3">
-      <label for="edad" class="form-label">Edad</label>
-      <input type="number" id="edad" class="form-control" formControlName="edad" placeholder="Escribe la edad">
-      <div *ngIf="adminForm.get('edad')?.invalid && adminForm.get('edad')?.touched" class="invalid-feedback d-block">
-        La edad es requerida.
-      </div>
-    </div>
-
-    <!-- Botones -->
-    <div class="d-flex justify-content-end gap-2 mt-4">
-      <button class="btn btn-secondary" type="button" (click)="regresar()">Cancelar</button>
-      <button *ngIf="!editar" class="btn btn-primary" type="submit">Registrar</button>
-      <button *ngIf="editar" class="btn btn-primary" type="button" (click)="actualizar()">Actualizar</button>
-    </div>
-  </form>
+      </form>
+    </mat-card-content>
+  </mat-card>
 </div>
-

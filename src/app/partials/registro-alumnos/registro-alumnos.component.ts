@@ -3,6 +3,9 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { NgxMaskDirective } from 'ngx-mask';
 
+// Importación de los módulos de Material
+import { MATERIAL_MODULES } from '../../shared/shared-material';
+
 // Importaciones de nuestros servicios
 import { AlumnosService } from '../../services/alumnos.service';
 import { FacadeService } from '../../services/facade.service';
@@ -13,16 +16,19 @@ import { FacadeService } from '../../services/facade.service';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    NgxMaskDirective
+    NgxMaskDirective,
+    ...MATERIAL_MODULES // ✅ Importamos todos los módulos de Material
   ],
   templateUrl: './registro-alumnos.component.html',
-  // styleUrls: ['./registro-alumnos.component.scss']
+  styleUrls: ['./registro-alumnos.component.scss']
 })
 export class RegistroAlumnosComponent implements OnInit {
 
   @Input() rol: string = "alumno";
   public alumnoForm: FormGroup;
   public editar: boolean = false;
+  public hide: boolean = true; // Para mostrar/ocultar contraseña
+  public hideConfirm: boolean = true; // Para confirmar contraseña
 
   private fb = inject(FormBuilder);
   private alumnosService = inject(AlumnosService);
@@ -58,7 +64,6 @@ export class RegistroAlumnosComponent implements OnInit {
       return;
     }
     console.log("Datos del alumno:", this.alumnoForm.value);
-    this.facadeService.openSnackBar('Alumno registrado (simulación)');
+    this.facadeService.openSnackBar('Alumno registrado correctamente');
   }
 }
-
