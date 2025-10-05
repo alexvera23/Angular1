@@ -1,50 +1,38 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
-// NOTA: Aún no importamos FacadeService porque todavía no lo hemos adaptado.
-// Lo agregaremos en un paso posterior.
-// import { FacadeService } from 'src/app/services/facade.se rvice';
+// 1. Importaciones CLAVE para Formularios y Angular Material
+import { FormsModule } from '@angular/forms'; // Necesario para usar [(ngModel)]
+// Importación de los módulos de Material
+import { MATERIAL_MODULES } from '../../shared/shared-material';
 
 @Component({
   selector: 'app-login-screen',
   standalone: true,
+  // 2. Añadir TODOS los módulos necesarios a los imports
   imports: [
-    CommonModule, // Necesario para directivas como *ngIf
-    ReactiveFormsModule, // Necesario para [formGroup] y formControlName
-    RouterLink // Necesario para routerLink
+    RouterLink,
+    FormsModule, // <-- ¡Muy importante!
+     ...MATERIAL_MODULES //  Importamos todos los módulos de Material
   ],
   templateUrl: './login-screen.component.html',
-  styleUrls: ['./login-screen.component.scss']
+  styleUrl: './login-screen.component.scss'
 })
 export class LoginScreenComponent {
-  public loginForm: FormGroup;
-  public hide: boolean = true;
+  // 3. Variables para almacenar los datos del formulario
+  public email = '';
+  public password = '';
+  public passwordVisible = false; // Para controlar la visibilidad de la contraseña
 
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    // private facadeService: FacadeService // Lo inyectaremos más adelante
-  ) {
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]],
-    });
-  }
+  // 4. Función que se ejecuta al enviar el formulario
+  onSubmit() {
+    // Por ahora, solo mostraremos los datos en la consola.
+    // En un futuro, aquí llamarías a tu servicio de autenticación.
+    console.log('Formulario enviado');
+    console.log('Email:', this.email);
+    console.log('Contraseña:', this.password);
 
-  login() {
-    if (this.loginForm.invalid) {
-      // Marcar campos como tocados para mostrar errores
-      this.loginForm.markAllAsTouched();
-      return;
-    }
-
-    // Aquí iría la lógica para llamar al servicio de autenticación
-    console.log("Formulario de login enviado:", this.loginForm.value);
-
-    // Simulación de login exitoso
-    alert("Inicio de sesión exitoso (simulación)");
-    this.router.navigate(['/dashboard']);
+    // Aquí puedes añadir lógica para redirigir al usuario si el login es exitoso
+    // Ejemplo: this.router.navigate(['/dashboard']);
   }
 }

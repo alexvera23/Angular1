@@ -1,68 +1,105 @@
-.container-login {
+// Variables para colores, facilitan la personalización
+$primary-color: #003366; // Un azul institucional
+$secondary-color: #f4f7fa;
+$text-color: #333;
+$light-gray: #e9ecef;
+
+// Estilo principal que ocupa toda la pantalla y crea las 2 columnas
+.login-page-wrapper {
+  display: flex;
+  height: 100vh; // Ocupa toda la altura de la ventana
+  width: 100vw;  // Ocupa todo el ancho de la ventana
+  position: fixed; // Fijo para que no haya scroll
+  top: 0;
+  left: 0;
+}
+
+// Columna de la izquierda (Branding)
+.branding-section {
+  flex: 1; // Ocupa el 50% del espacio
+  background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  text-align: center;
+
+  .branding-content {
+    max-width: 400px;
+    animation: fadeIn 1s ease-in-out;
+  }
+
+  .brand-logo {
+    width: 150px;
+    margin-bottom: 1.5rem;
+  }
+}
+
+// Columna de la derecha (Formulario)
+.form-section {
+  flex: 1; // Ocupa el otro 50%
+  background-color: $secondary-color;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 450px;
+  border-radius: 10px;
+  border: none;
+  animation: slideInUp 0.7s ease-out;
+}
+
+.form-logo {
+  width: 70px;
+}
+
+// Estilo para el botón principal
+.login-button {
+  padding: 12px 0;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+// Estilo para el enlace de registro
+.register-link {
+  color: $primary-color;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.3s;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+// Animaciones sutiles para mejorar la experiencia
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+// Media Query para pantallas pequeñas (móviles)
+@media (max-width: 768px) {
+  .login-page-wrapper {
+    flex-direction: column;
+  }
+
+  .branding-section {
+    display: none; // Ocultamos la sección de branding para ahorrar espacio
+  }
+
+  .form-section {
     width: 100%;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-size: cover;
-    background-position: center;
-}
-
-.login-box {
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 100%;
-    max-width: 450px;
-}
-
-.logo {
-    width: 100%;
-    max-width: 120px;
-    margin-bottom: 20px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-h2 {
-    font-family: 'NexaBold', sans-serif;
-    color: #333;
-    margin-bottom: 20px;
-}
-
-.form-label {
-    font-weight: bold;
-    float: left;
-}
-
-.btn-primary {
-    background-color: #003366; // Azul institucional BUAP
-    border: none;
-    padding: 10px;
-    font-size: 16px;
-}
-
-.btn-primary:hover {
-    background-color: #002244;
-}
-
-a {
-    color: #003366;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-// Estilo para el feedback de validación
-.invalid-feedback {
-    display: block;
-    text-align: left;
-    width: 100%;
-    margin-top: .25rem;
-    font-size: .875em;
-    color: #dc3545;
+    height: 100%;
+  }
 }
