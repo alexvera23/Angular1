@@ -9,7 +9,8 @@ import { MATERIAL_MODULES } from '../../shared/shared-material';
 // Importaciones de nuestros servicios
 import { AlumnosService } from '../../services/alumnos.service';
 import { FacadeService } from '../../services/facade.service';
-
+//importar el nuevo servicio AuthService
+import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-registro-alumnos',
   standalone: true,
@@ -33,6 +34,7 @@ export class RegistroAlumnosComponent implements OnInit {
   private fb = inject(FormBuilder);
   private alumnosService = inject(AlumnosService);
   private facadeService = inject(FacadeService);
+  private authService = inject(AuthService); // Inyecta el servicio AuthService
 
   constructor() {
     const alumnoSchema = this.alumnosService.esquemaAlumno();
@@ -63,7 +65,35 @@ export class RegistroAlumnosComponent implements OnInit {
       this.facadeService.openSnackBar('Por favor, corrige los errores.', 'ERROR');
       return;
     }
-    console.log("Datos del alumno:", this.alumnoForm.value);
-    this.facadeService.openSnackBar('Alumno registrado correctamente');
+    const userData = { ...this.alumnoForm.value };
+    userData.username = this.alumnoForm.get('email')?.value; // Asignar el email como username
+    delete userData.confirmar_password; // Eliminar el campo confirmar_password
+
+    if(userData.fecha_nacimiento){
+      const fecha = new Date(userData.fecha_nacimiento);
+      const year = fecha.getFullYear();
+      const month = ('0' + (fecha.getMonth() + 1)).slice(-2);
+      const day = ('0' + fecha.getDate()).slice(-2);
+      userData.fecha_nacimiento = `${year}-${month}-${day}`;
+    }
+    console.log('Datos a enviar al backend:', userData);
+    this.authService.register(userData).subscribe({
+      next: (response) => {
+        console.log('Respuesta del servidor:', response);
+        this.facadeService.openSnackBar('Registro exitoso', 'ÉXITO');
+        this.alumnoForm.reset();
+      },
+      error: (err) => {
+        console.error('Error al registrar el usuario:',err);
+        let errorMessage = 'Error en el registro.';
+        if(err.error){
+          const errors = Object.values(err.error).flat().join(' ');
+          errorMessage += ` ${errors}`;
+        }else {
+          errorMessage += ' Por favor, intenta de nuevo más tarde.';
+        }
+        this.facadeService.openSnackBar(errorMessage, 'ERROR');
+  }
+    });
   }
 }

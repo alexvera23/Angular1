@@ -8,6 +8,8 @@ import { MATERIAL_MODULES } from '../../shared/shared-material';
 // Importaciones de nuestros servicios
 import { AdministradoresService } from '../../services/administradores.service';
 import { FacadeService } from '../../services/facade.service';
+// Importa el nuevo servicio AuthService
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-registro-admin',
@@ -32,6 +34,7 @@ export class RegistroAdminComponent implements OnInit {
   private location = inject(Location);
   private administradoresService = inject(AdministradoresService);
   private facadeService = inject(FacadeService);
+  private authService = inject(AuthService); // Inyecta el servicio AuthService
 
   constructor() {
     const adminSchema = this.administradoresService.esquemaAdmin();
@@ -55,16 +58,53 @@ export class RegistroAdminComponent implements OnInit {
     this.adminForm.patchValue({ rol: this.rol });
   }
 
-  public registrar() {
-    if (this.adminForm.invalid) {
-      this.adminForm.markAllAsTouched();
-      this.facadeService.openSnackBar('Por favor, corrige los errores.', 'ERROR');
-      return;
+   public registrar() {
+    // 1. Validar el formulario como siempre
+    if (this.adminForm.invalid) { // Cambia "adminForm" por "alumnoForm" o "maestroForm" según el componente
+        this.adminForm.markAllAsTouched();
+        this.facadeService.openSnackBar('Por favor, corrige los errores.', 'ERROR');
+        return;
     }
 
-    console.log("Formulario válido. Datos:", this.adminForm.value);
-    this.facadeService.openSnackBar('Administrador registrado correctamente');
-  }
+    // 2. Crear una copia de los datos del formulario
+    const userData = { ...this.adminForm.value }; // Usa el nombre de tu form group aquí
+
+    // 3. Asignar el username DIRECTAMENTE desde el control del formulario
+    //    Esto es más seguro que leerlo de la copia.
+    userData.username = this.adminForm.get('email')?.value; // Usa el nombre de tu form group aquí
+
+    // 4. Eliminar el campo que el backend no necesita
+    delete userData.confirmar_password;
+
+    // 5. ¡Paso de depuración clave! Revisa la consola del navegador
+    console.log('Datos que se enviarán al backend:', userData);
+
+    // 6. Enviar la petición
+    this.authService.register(userData).subscribe({
+        next: (response) => {
+            console.log("Usuario registrado con éxito:", response);
+            this.facadeService.openSnackBar('Registro exitoso');
+            this.adminForm.reset();
+            // Aquí puedes resetear el formulario o redirigir al usuario
+        },
+        error: (err) => {
+            // Esto nos mostrará el error detallado de Django en la consola del navegador
+            console.error("Error detallado del backend:", err.error); 
+            
+            let errorMessage = 'Error en el registro. ';
+            if (err.error && err.error.username) {
+                errorMessage += `Username: ${err.error.username[0]}`;
+            } else if (err.error) {
+                // Para otros posibles errores
+                const errors = Object.values(err.error).flat().join(' ');
+                errorMessage += errors;
+            } else {
+                errorMessage += 'Inténtalo de nuevo.';
+            }
+            this.facadeService.openSnackBar(errorMessage, 'ERROR');
+        }
+    });
+}
 
   public actualizar() { 
     console.log("Actualizar administrador");

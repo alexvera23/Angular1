@@ -35,10 +35,21 @@
     </div>
 
     <div [ngSwitch]="tipo_usuario">
-      <app-registro-admin *ngSwitchCase="'administrador'"></app-registro-admin>
-      <app-registro-profesores *ngSwitchCase="'maestro'"></app-registro-profesores>
-      <app-registro-alumnos *ngSwitchCase="'alumno'"></app-registro-alumnos>
-    </div>
+  <app-registro-admin 
+    *ngSwitchCase="'administrador'" 
+    [rol]="tipo_usuario">
+  </app-registro-admin>
+
+  <app-registro-profesores 
+    *ngSwitchCase="'maestro'" 
+    [rol]="tipo_usuario">
+  </app-registro-profesores>
+
+  <app-registro-alumnos 
+    *ngSwitchCase="'alumno'" 
+    [rol]="tipo_usuario">
+  </app-registro-alumnos>
+</div>
 
     <div class="mt-3 text-center">
       <a routerLink="/login">¿Ya tienes una cuenta? Inicia Sesión</a>

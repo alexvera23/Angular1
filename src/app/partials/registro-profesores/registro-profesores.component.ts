@@ -9,6 +9,8 @@ import { MATERIAL_MODULES } from '../../shared/shared-material';
 // Servicios
 import { ProfesoresService } from '../../services/profesores.service';
 import { FacadeService } from '../../services/facade.service';
+//importar el nuevo servicio AuthService
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-registro-profesores',
@@ -45,6 +47,7 @@ export class RegistroProfesoresComponent implements OnInit {
   private fb = inject(FormBuilder);
   private profesoresService = inject(ProfesoresService);
   private facadeService = inject(FacadeService);
+  private authService = inject(AuthService); // Inyecta el servicio AuthService
 
   constructor() {
     const maestroSchema = this.profesoresService.esquemaProfesor();
@@ -85,9 +88,46 @@ export class RegistroProfesoresComponent implements OnInit {
       this.facadeService.openSnackBar('Por favor, corrige los errores.', 'ERROR');
       return;
     }
-    console.log("Formulario de maestro válido. Datos:", this.maestroForm.value);
-    this.facadeService.openSnackBar('Maestro registrado correctamente');
-  }
+    const userData = { ...this.maestroForm.value };
+    userData.username = this.maestroForm.get('email')?.value;
+    delete userData.confirmar_password;
+
+    // --- ¡AQUÍ ESTÁ LA CORRECCIÓN! ---
+    // 1. Verificamos si la fecha existe
+    if (userData.fecha_nacimiento) {
+      // 2. Creamos un nuevo objeto de fecha
+      const fecha = new Date(userData.fecha_nacimiento);
+      
+      // 3. Formateamos a YYYY-MM-DD
+      // Obtenemos los componentes y nos aseguramos de que tengan dos dígitos
+      const year = fecha.getFullYear();
+      const month = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se suma 1 porque los meses van de 0 a 11
+      const day = ('0' + fecha.getDate()).slice(-2);
+      
+      // 4. Asignamos la cadena de texto formateada
+      userData.fecha_nacimiento = `${year}-${month}-${day}`;
+    }
+
+    console.log('Datos que se enviarán al backend:', userData);
+    this.authService.register(userData).subscribe({
+      next: (response) => {
+        console.log('Respuesta del servidor:', response);
+        this.facadeService.openSnackBar('Registro exitoso', 'ÉXITO');
+        this.maestroForm.reset();
+      },
+      error: (err) => {
+        console.error('Error al registrar el usuario:', err);
+        let errorMessage = 'Error en el registro';
+        if (err.error) {
+          const errors = Object.values(err.error).flat().join(' ');
+          errorMessage += `: ${errors}`;
+        } else {
+          errorMessage += '. Por favor, intenta de nuevo más tarde.';
+        }
+        this.facadeService.openSnackBar(errorMessage, 'ERROR');
+      }
+    });
+}
 
   soloLetras(event: KeyboardEvent) {
     if (!/^[a-zA-Z\u00C0-\u017F\s]*$/.test(event.key)) {
