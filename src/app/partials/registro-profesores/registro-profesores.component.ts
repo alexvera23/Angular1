@@ -11,6 +11,8 @@ import { ProfesoresService } from '../../services/profesores.service';
 import { FacadeService } from '../../services/facade.service';
 //importar el nuevo servicio AuthService
 import { AuthService } from '../../services/auth.service';
+// Importar el servicio de materias
+import { MateriasService } from '../../services/materias.service';
 
 @Component({
   selector: 'app-registro-profesores',
@@ -33,21 +35,13 @@ export class RegistroProfesoresComponent implements OnInit {
   public hideConfirm: boolean = true;
   
   // Simulación de materias que vendrían de una base de datos
-  public materiasData = [
-    { id: 1, nombre: 'Aplicaciones Web' },
-    { id: 2, nombre: 'Programación Orientada a Objetos' },
-    { id: 3, nombre: 'Bases de Datos' },
-    { id: 4, nombre: 'Redes de Computadoras' },
-    { id: 5, nombre: 'Inteligencia Artificial' },
-    { id: 6, nombre: 'Estructura de Datos' },
-    { id: 7, nombre: 'Sistemas Operativos' },
-    { id: 8, nombre: 'Ingeniería de Software' }
-  ];
+  public materiasData: any[] = [];
   
   private fb = inject(FormBuilder);
   private profesoresService = inject(ProfesoresService);
   private facadeService = inject(FacadeService);
   private authService = inject(AuthService); // Inyecta el servicio AuthService
+  private materiasService = inject(MateriasService); // Inyecta el servicio MateriasService
 
   constructor() {
     const maestroSchema = this.profesoresService.esquemaProfesor();
@@ -69,6 +63,19 @@ export class RegistroProfesoresComponent implements OnInit {
 
   ngOnInit(): void {
     this.maestroForm.patchValue({ rol: this.rol });
+    this.cargarMaterias();
+  }
+  // Método para obtener las materias desde el servicio
+  cargarMaterias(): void {
+    this.materiasService.getMaterias().subscribe({
+      next: (data) => {
+        this.materiasData = data;
+      },
+      error: (err) => {
+        console.error('Error al cargar las materias', err);
+        this.facadeService.openSnackBar('No se pudieron cargar las materias.', 'ERROR');
+      }
+    });
   }
 
   onCheckboxChange(event: any) {

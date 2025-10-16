@@ -1,38 +1,61 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+// src/app/screens/login-screen/login-screen.component.ts
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
-// 1. Importaciones CLAVE para Formularios y Angular Material
-import { FormsModule } from '@angular/forms'; // Necesario para usar [(ngModel)]
-// Importación de los módulos de Material
+// Importaciones de Material y nuestro servicio
 import { MATERIAL_MODULES } from '../../shared/shared-material';
+import { AuthService } from '../../services/auth.service';
+import { FacadeService } from '../../services/facade.service';
+
 
 @Component({
   selector: 'app-login-screen',
   standalone: true,
-  // 2. Añadir TODOS los módulos necesarios a los imports
   imports: [
+    CommonModule,
     RouterLink,
-    FormsModule, // <-- ¡Muy importante!
-     ...MATERIAL_MODULES //  Importamos todos los módulos de Material
+    ReactiveFormsModule, // Cambiamos a ReactiveFormsModule
+    ...MATERIAL_MODULES //  Importamos todos los módulos de Material
   ],
   templateUrl: './login-screen.component.html',
   styleUrl: './login-screen.component.scss'
 })
 export class LoginScreenComponent {
-  // 3. Variables para almacenar los datos del formulario
-  public email = '';
-  public password = '';
-  public passwordVisible = false; // Para controlar la visibilidad de la contraseña
+  public loginForm: FormGroup;
+  public passwordVisible = false;
 
-  // 4. Función que se ejecuta al enviar el formulario
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private facadeService = inject(FacadeService);
+
+  constructor() {
+    this.loginForm = this.fb.group({
+      // Django espera 'username', no 'email', para el login por defecto
+      username: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]],
+    });
+  }
+
   onSubmit() {
-    // Por ahora, solo mostraremos los datos en la consola.
-    // En un futuro, aquí llamarías a tu servicio de autenticación.
-    console.log('Formulario enviado');
-    console.log('Email:', this.email);
-    console.log('Contraseña:', this.password);
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
 
-    // Aquí puedes añadir lógica para redirigir al usuario si el login es exitoso
-    // Ejemplo: this.router.navigate(['/dashboard']);
+    this.authService.login(this.loginForm.value).subscribe({
+      next: (response) => {
+        console.log('Login exitoso:', response);
+        // TODO: Guardar el 'access_token' en localStorage
+        this.facadeService.openSnackBar('Inicio de sesión exitoso');
+        this.router.navigate(['/dashboard']); // Redirigir al dashboard
+      },
+      error: (err) => {
+        console.error('Error en el login:', err);
+        this.facadeService.openSnackBar('Credenciales incorrectas. Por favor, inténtalo de nuevo.', 'ERROR');
+      }
+    });
   }
 }
