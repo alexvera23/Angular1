@@ -21,7 +21,7 @@ import { MateriasService } from '../../services/materias.service';
     CommonModule,
     ReactiveFormsModule,
     NgxMaskDirective,
-    ...MATERIAL_MODULES // ✅ Importamos todos los módulos de Material
+    ...MATERIAL_MODULES //  Importamos todos los módulos de Material
   ],
   templateUrl: './registro-profesores.component.html',
   styleUrls: ['./registro-profesores.component.scss']
