@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   // --- GRUPO DE RUTAS DE AUTENTICACIÓN ---
@@ -33,9 +34,12 @@ export const routes: Routes = [
     // Cuando el usuario vaya a '/dashboard', se cargará el layout del dashboard.
     path: 'dashboard',
     loadComponent: () => import('./layouts/dashboard-layout/dashboard-layout.component').then(c => c.DashboardLayoutComponent),
+    canActivate: [authGuard], // Proteger todas las rutas del dashboard con el AuthGuard
     children: [
-      // Aquí irían las rutas del dashboard, ej: 'perfil', 'cursos', etc.
-      // { path: 'profile', loadComponent: ... }
+      {
+        path: 'screens-home',
+        loadComponent: () => import('./screens/home/home.component').then(c => c.HomeComponent)
+      }
     ]
   },
 

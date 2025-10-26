@@ -2,70 +2,136 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environments';
-import { Observable, tap} from 'rxjs';
+import { Observable, tap } from 'rxjs';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private apiUrl = environment.url_api; // Obtenemos la URL de la API desde el archivo de entorno
+  private cookieService = inject(CookieService);
+  private apiUrl = environment.url_api;
 
   constructor() { }
 
   /**
    * Envía los datos de un nuevo usuario al backend para registrarlo.
-   * @param userData Los datos del formulario de registro.
-   * @returns Un Observable con la respuesta del servidor.
    */
   register(userData: any): Observable<any> {
-    // Hacemos una petición POST a nuestro endpoint de Django
     return this.http.post(`${this.apiUrl}/api/users/register/`, userData);
   }
 
-  //Añadir el método login
+  /**
+   * Inicia sesión y guarda los tokens en cookies.
+   */
   login(credentials: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/api/token/`, credentials).pipe(
-      // 'tap' nos permite ejecutar una acción sin modificar la respuesta
       tap((tokens: any) => {
-        // Guardamos los tokens cuando la petición es exitosa
         this.saveTokens(tokens.access, tokens.refresh);
       })
     );
   }
-  // --- NUEVOS MÉTODOS PARA MANEJAR TOKENS ---
 
   /**
-   * Guarda los tokens en localStorage.
-   * @param accessToken El token de acceso.
-   * @param refreshToken El token de refresco.
+   * Guarda los tokens en cookies seguras.
+   * Las cookies expiran en:
+   * - Access token: 1 día (puedes ajustarlo según tu backend)
+   * - Refresh token: 7 días (puedes ajustarlo según tu backend)
    */
   private saveTokens(accessToken: string, refreshToken: string): void {
-    localStorage.setItem('access_token', accessToken);
-    localStorage.setItem('refresh_token', refreshToken);
+    // Opciones de seguridad para las cookies
+    const cookieOptions = {
+      path: '/',           // Disponible en toda la aplicación
+      secure: false,       // Cambiar a true en producción (requiere HTTPS)
+      sameSite: 'Lax'      // Protección contra CSRF
+    };
+
+    // Guardar access token (expira en 1 día)
+    this.cookieService.set(
+      'access_token',
+      accessToken,
+      1, // Días de expiración
+      cookieOptions.path,
+      undefined,
+      cookieOptions.secure,
+      cookieOptions.sameSite as 'Lax' | 'Strict' | 'None'
+    );
+
+    // Guardar refresh token (expira en 7 días)
+    this.cookieService.set(
+      'refresh_token',
+      refreshToken,
+      7, // Días de expiración
+      cookieOptions.path,
+      undefined,
+      cookieOptions.secure,
+      cookieOptions.sameSite as 'Lax' | 'Strict' | 'None'
+    );
   }
 
   /**
-   * Obtiene el token de acceso desde localStorage.
-   * @returns El token de acceso o null si no existe.
+   * Obtiene el token de acceso desde las cookies.
    */
   getAccessToken(): string | null {
-    return localStorage.getItem('access_token');
+    const token = this.cookieService.get('access_token');
+    return token || null;
   }
 
   /**
-   * Verifica si el usuario está autenticado (si existe un token).
-   * @returns true si hay un token, false si no.
+   * Obtiene el refresh token desde las cookies.
+   */
+  getRefreshToken(): string | null {
+    const token = this.cookieService.get('refresh_token');
+    return token || null;
+  }
+
+  /**
+   * Verifica si el usuario está autenticado.
    */
   isLoggedIn(): boolean {
-    return !!this.getAccessToken(); // El doble '!!' convierte el string (o null) a un booleano
+    return !!this.getAccessToken();
   }
 
   /**
-   * Cierra la sesión del usuario eliminando los tokens.
+   * Cierra la sesión eliminando las cookies.
    */
   logout(): void {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
+    this.cookieService.delete('access_token', '/');
+    this.cookieService.delete('refresh_token', '/');
+  }
+
+  /**
+   * Refresca el access token usando el refresh token.
+   */
+  refreshToken(): Observable<any> {
+    const refreshToken = this.getRefreshToken();
+    
+    if (!refreshToken) {
+      throw new Error('No refresh token available');
+    }
+
+    return this.http.post(`${this.apiUrl}/api/token/refresh/`, {
+      refresh: refreshToken
+    }).pipe(
+      tap((tokens: any) => {
+        // Solo actualizamos el access token
+        const cookieOptions = {
+          path: '/',
+          secure: false,
+          sameSite: 'Lax'
+        };
+
+        this.cookieService.set(
+          'access_token',
+          tokens.access,
+          1,
+          cookieOptions.path,
+          undefined,
+          cookieOptions.secure,
+          cookieOptions.sameSite as 'Lax' | 'Strict' | 'None'
+        );
+      })
+    );
   }
 }
