@@ -13,6 +13,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
 
 // Array con todos los módulos de Material
 export const MATERIAL_MODULES = [
@@ -27,10 +28,11 @@ export const MATERIAL_MODULES = [
   MatRadioModule,
   MatSnackBarModule,
   MatCardModule,
-  MatDividerModule
+  MatDividerModule,
+  MatListModule
 ];
 
-// También puedes exportar módulos individuales si los necesitas
+// También puedo exportar módulos individuales por si quiero importarlos de forma específica
 export {
   MatFormFieldModule,
   MatInputModule,
@@ -43,5 +45,6 @@ export {
   MatRadioModule,
   MatSnackBarModule,
   MatCardModule,
-  MatDividerModule
+  MatDividerModule,
+  MatListModule
 };
