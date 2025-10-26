@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environments';
 import { Observable, tap } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ export class AuthService {
   private http = inject(HttpClient);
   private cookieService = inject(CookieService);
   private apiUrl = environment.url_api;
+  private router = inject(Router);
 
   constructor() { }
 
@@ -99,6 +101,8 @@ export class AuthService {
   logout(): void {
     this.cookieService.delete('access_token', '/');
     this.cookieService.delete('refresh_token', '/');
+    //Redirigir al login 
+    this.router.navigate(['/login']);
   }
 
   /**

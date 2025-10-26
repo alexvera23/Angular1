@@ -36,10 +36,24 @@ export const routes: Routes = [
     loadComponent: () => import('./layouts/dashboard-layout/dashboard-layout.component').then(c => c.DashboardLayoutComponent),
     canActivate: [authGuard], // Proteger todas las rutas del dashboard con el AuthGuard
     children: [
+      { 
+        path: '', redirectTo: 'admin', pathMatch: 'full'
+        
+      },
       {
-        path: 'screens-home',
-        loadComponent: () => import('./screens/home/home.component').then(c => c.HomeComponent)
+        path : 'admin',
+        loadComponent: () => import('./screens/admin/admin.component').then(c => c.AdminComponent)
+      },
+      {
+        path : 'profesor',
+        loadComponent: () => import('./screens/profesores/profesores.component').then(c => c.ProfesoresComponent)
+      },
+      {
+        path : 'alumno',
+        loadComponent: () => import('./screens/alumno/alumno.component').then(c => c.AlumnoComponent)
       }
+
+
     ]
   },
 
