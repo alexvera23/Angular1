@@ -17,7 +17,7 @@ import { AuthService } from '../../services/auth.service';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    ...MATERIAL_MODULES // ✅ Importamos todos los módulos de Material
+    ...MATERIAL_MODULES //  Importamos todos los módulos de Material
   ],
   templateUrl: './registro-admin.component.html',
   styleUrls: ['./registro-admin.component.scss']

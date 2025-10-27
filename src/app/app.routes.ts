@@ -29,7 +29,7 @@ export const routes: Routes = [
     ]
   },
 
-  // --- GRUPO DE RUTAS DEL DASHBOARD (PARA EL FUTURO) ---
+  // GRUPO DE RUTAS DEL DASHBOARD
   {
     // Cuando el usuario vaya a '/dashboard', se cargará el layout del dashboard.
     path: 'dashboard',
@@ -42,15 +42,18 @@ export const routes: Routes = [
       },
       {
         path : 'admin',
-        loadComponent: () => import('./screens/admin/admin.component').then(c => c.AdminComponent)
+        loadComponent: () => import('./screens/admin/admin.component').then(c => c.AdminComponent),
+        canActivate: [authGuard] // Proteger esta ruta con el AuthGuard
       },
       {
         path : 'profesor',
-        loadComponent: () => import('./screens/profesores/profesores.component').then(c => c.ProfesoresComponent)
+        loadComponent: () => import('./screens/profesores/profesores.component').then(c => c.ProfesoresComponent),
+        canActivate: [authGuard] // Proteger esta ruta con el AuthGuard
       },
       {
         path : 'alumno',
-        loadComponent: () => import('./screens/alumno/alumno.component').then(c => c.AlumnoComponent)
+        loadComponent: () => import('./screens/alumno/alumno.component').then(c => c.AlumnoComponent),
+        canActivate: [authGuard] // Proteger esta ruta con el AuthGuard
       }
 
 

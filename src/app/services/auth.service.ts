@@ -4,7 +4,18 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environments';
 import { Observable, tap } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
+import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
+
+
+// Interfaz para tipar el payload del token
+interface TokenPayload {
+  user_id: number;
+  username: string;
+  rol: string;
+  exp: number;
+  iat: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +25,7 @@ export class AuthService {
   private cookieService = inject(CookieService);
   private apiUrl = environment.url_api;
   private router = inject(Router);
+  
 
   constructor() { }
 
@@ -37,23 +49,19 @@ export class AuthService {
 
   /**
    * Guarda los tokens en cookies seguras.
-   * Las cookies expiran en:
-   * - Access token: 1 día (puedes ajustarlo según tu backend)
-   * - Refresh token: 7 días (puedes ajustarlo según tu backend)
    */
   private saveTokens(accessToken: string, refreshToken: string): void {
-    // Opciones de seguridad para las cookies
     const cookieOptions = {
-      path: '/',           // Disponible en toda la aplicación
+      path: '/',
       secure: false,       // Cambiar a true en producción (requiere HTTPS)
-      sameSite: 'Lax'      // Protección contra CSRF
+      sameSite: 'Lax'
     };
 
     // Guardar access token (expira en 1 día)
     this.cookieService.set(
       'access_token',
       accessToken,
-      1, // Días de expiración
+      1,
       cookieOptions.path,
       undefined,
       cookieOptions.secure,
@@ -64,7 +72,7 @@ export class AuthService {
     this.cookieService.set(
       'refresh_token',
       refreshToken,
-      7, // Días de expiración
+      7,
       cookieOptions.path,
       undefined,
       cookieOptions.secure,
@@ -89,10 +97,71 @@ export class AuthService {
   }
 
   /**
+   * Decodifica el token y obtiene el payload con la información del usuario.
+   */
+  getTokenPayload(): TokenPayload | null {
+    const token = this.getAccessToken();
+    
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const decoded = jwtDecode<TokenPayload>(token);
+      return decoded;
+    } catch (error) {
+      console.error('Error al decodificar el token:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Obtiene el rol del usuario desde el token.
+   */
+  getUserRole(): string | null {
+    const payload = this.getTokenPayload();
+    return payload ? payload.rol : null;
+  }
+
+  /**
+   * Obtiene el ID del usuario desde el token.
+   */
+  getUserId(): number | null {
+    const payload = this.getTokenPayload();
+    return payload ? payload.user_id : null;
+  }
+
+  /**
+   * Obtiene el username del usuario desde el token.
+   */
+  getUsername(): string | null {
+    const payload = this.getTokenPayload();
+    return payload ? payload.username : null;
+  }
+
+  /**
    * Verifica si el usuario está autenticado.
    */
   isLoggedIn(): boolean {
-    return !!this.getAccessToken();
+    const token = this.getAccessToken();
+    
+    if (!token) {
+      return false;
+    }
+
+    // Verificar si el token ha expirado
+    try {
+      const payload = this.getTokenPayload();
+      if (!payload) {
+        return false;
+      }
+
+      // Verificar si el token ha expirado (exp está en segundos, Date.now() en milisegundos)
+      const currentTime = Date.now() / 1000;
+      return payload.exp > currentTime;
+    } catch (error) {
+      return false;
+    }
   }
 
   /**
@@ -101,8 +170,9 @@ export class AuthService {
   logout(): void {
     this.cookieService.delete('access_token', '/');
     this.cookieService.delete('refresh_token', '/');
-    //Redirigir al login 
+    console.log('Usuario deslogueado, cookies eliminadas.');
     this.router.navigate(['/login']);
+    
   }
 
   /**
@@ -119,7 +189,6 @@ export class AuthService {
       refresh: refreshToken
     }).pipe(
       tap((tokens: any) => {
-        // Solo actualizamos el access token
         const cookieOptions = {
           path: '/',
           secure: false,
@@ -137,5 +206,23 @@ export class AuthService {
         );
       })
     );
+  }
+
+  /**
+   * Obtiene la ruta de dashboard según el rol del usuario.
+   */
+  getDashboardRoute(): string {
+    const role = this.getUserRole();
+    
+    switch (role) {
+      case 'administrador':
+        return '/dashboard/admin';
+      case 'maestro':
+        return '/dashboard/profesor';
+      case 'alumno':
+        return '/dashboard/alumno';
+      default:
+        return '/login';
+    }
   }
 }

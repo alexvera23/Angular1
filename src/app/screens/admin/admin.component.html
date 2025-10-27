@@ -3,6 +3,7 @@
     <mat-card-header>
       <mat-card-title>Panel de Administrador</mat-card-title>
       <mat-card-subtitle>Gestión del Sistema Escolar</mat-card-subtitle>
+      <img mat-card-avatar src="assets/images/fcc_logo.png" alt="Avatar de Administrador" class="admin-avatar" /> 
     </mat-card-header>
     <mat-card-content>
       <p>Bienvenido, Administrador.</p>
@@ -11,6 +12,7 @@
         <mat-list-item role="listitem">Gestión de Usuarios</mat-list-item>
         <mat-list-item role="listitem">Gestión de Cursos</mat-list-item>
         <mat-list-item role="listitem">Reportes y Estadísticas</mat-list-item>
+        <button mat-raised-button color="warn" (click)="logout()">Cerrar Sesión</button>
       </mat-list>
     </mat-card-content>
   </mat-card>

@@ -10,6 +10,8 @@ import { AuthService } from '../../services/auth.service';
 import { FacadeService } from '../../services/facade.service';
 
 
+
+
 @Component({
   selector: 'app-login-screen',
   standalone: true,
@@ -25,6 +27,7 @@ import { FacadeService } from '../../services/facade.service';
 export class LoginScreenComponent {
   public loginForm: FormGroup;
   public passwordVisible = false;
+  public isLoading = false;
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -42,15 +45,23 @@ export class LoginScreenComponent {
   onSubmit() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
+      this.facadeService.openSnackBar('Por favor, completa el formulario correctamente.', 'ERROR');
       return;
     }
+    this.isLoading = true;
 
     this.authService.login(this.loginForm.value).subscribe({
       next: (response) => {
         console.log('Login exitoso:', response);
-        // TODO: Guardar el 'access_token' en localStorage
+        const userRole = this.authService.getUserRole();
+        const username= this.authService.getUsername();
+        console.log('Rol del usuario:', userRole);
+        console.log('Nombre de usuario:', username);
+
+
         this.facadeService.openSnackBar('Inicio de sesión exitoso');
-        this.router.navigate(['/dashboard']); // Redirigir al dashboard
+        this.redirectByRole(userRole);
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Error en el login:', err);
@@ -58,4 +69,24 @@ export class LoginScreenComponent {
       }
     });
   }
+
+   private redirectByRole(role: string | null): void {
+    switch (role) {
+      case 'administrador':
+        this.router.navigate(['/dashboard/admin']);
+        break;
+      case 'maestro':
+        this.router.navigate(['/dashboard/profesor']);
+        break;
+      case 'alumno':
+        this.router.navigate(['/dashboard/alumno']);
+        break;
+      default:
+        console.error('Rol no reconocido:', role);
+        this.facadeService.openSnackBar('Error: Rol de usuario no válido', 'ERROR');
+        this.authService.logout();
+        this.router.navigate(['/login']);
+    }
+  }
+
 }
