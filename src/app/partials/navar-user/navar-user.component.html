@@ -1,0 +1,181 @@
+<div class="navbar-sidebar-wrapper">
+  <!-- Desktop sidebar -->
+  <nav class="scoop-side-navbar" *ngIf="!isMobileView">
+    <div class="sidebar-header">
+      <img src="assets/images/fcc_logo.png" alt="Logo BUAP" class="sidebar-logo" />
+      <h3 class="sidebar-title">Sistema Escolar</h3>
+    </div>
+
+    <ul class="scoop-navbar-list">
+      <!-- Registro de usuarios (Solo Admin y Maestros) -->
+      <li *ngIf="canSeeRegisterItem()" 
+          routerLink="/registro-usuario" 
+          routerLinkActive="active" 
+          class="scoop-navbar-item">
+        <span class="material-icons">person_add</span>
+        <span>Registro</span>
+      </li>
+
+      <!-- Administradores (Solo Admin) -->
+      <li *ngIf="canSeeAdminItems()" 
+          [routerLink]="['/dashboard/admin']" 
+          routerLinkActive="active" 
+          class="scoop-navbar-item">
+        <span class="material-icons">admin_panel_settings</span>
+        <span>Admins</span>
+      </li>
+
+      <!-- Maestros (Solo Admin y Maestros) -->
+      <li *ngIf="canSeeTeacherItems()" 
+          [routerLink]="['/dashboard/profesor']" 
+          routerLinkActive="active" 
+          class="scoop-navbar-item">
+        <span class="material-icons">people</span>
+        <span>Maestros</span>
+      </li>
+
+      <!-- Alumnos (Todos pueden ver) -->
+      <li *ngIf="canSeeStudentItems()" 
+          [routerLink]="['/dashboard/alumno']" 
+          routerLinkActive="active" 
+          class="scoop-navbar-item">
+        <span class="material-icons">school</span>
+        <span>Alumnos</span>
+      </li>
+
+      <!-- Gráficas (Todos pueden ver) -->
+      <li *ngIf="canSeeStudentItems()" 
+          routerLink="/dashboard/graficas" 
+          routerLinkActive="active" 
+          class="scoop-navbar-item">
+        <span class="material-icons">bar_chart</span>
+        <span>Gráficas</span>
+      </li>
+
+      <!-- Eventos Académicos (Admin y Maestros) -->
+      <li *ngIf="canSeeTeacherItems()" 
+          routerLink="/dashboard/eventos" 
+          routerLinkActive="active" 
+          class="scoop-navbar-item">
+        <span class="material-icons">event</span>
+        <span>Eventos Académicos</span>
+      </li>
+    </ul>
+
+    <!-- Botón de logout en el sidebar -->
+    <button class="scoop-logout-btn" (click)="logout()">
+      <span class="material-icons">logout</span>
+      <span>Cerrar sesión</span>
+    </button>
+  </nav>
+
+  <!-- Navbar superior (Top bar) -->
+  <nav class="scoop-navbar">
+    <!-- Botón de menú móvil -->
+    <button class="dashboard-toggle-btn" 
+            *ngIf="isMobileView" 
+            (click)="toggleSidebar()" 
+            aria-label="Abrir menú">
+      <span class="material-icons">menu_open</span>
+    </button>
+
+    <!-- Logo -->
+    <span class="scoop-navbar-logo">BUAP</span>
+
+    <!-- Iconos de la derecha -->
+    <div class="scoop-navbar-icons">
+      <!-- Botón de cambio de tema -->
+      <span class="material-icons navbar-icon" 
+            (click)="togglePalette()" 
+            style="cursor:pointer" 
+            title="Cambiar tema">
+        palette
+      </span>
+
+      <!-- Avatar con inicial del usuario -->
+      <div class="scoop-navbar-avatar" 
+           *ngIf="userInitial"
+           [title]="userName + ' (' + getRoleName() + ')'">
+        {{ userInitial }}
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile sidebar overlay y menú móvil -->
+  <ng-container *ngIf="isMobileView">
+    <!-- Overlay oscuro cuando el sidebar está abierto -->
+    <div class="mobile-sidebar-overlay" 
+         [ngClass]="{'mobile-open': mobileOpen}" 
+         (click)="closeSidebar()">
+    </div>
+
+    <!-- Sidebar móvil -->
+    <nav class="scoop-side-navbar" [ngClass]="{'mobile-open': mobileOpen}">
+      <div class="sidebar-header">
+        <img src="assets/images/fcc_logo.png" alt="Logo BUAP" class="sidebar-logo" />
+        <h3 class="sidebar-title">Sistema Escolar</h3>
+      </div>
+
+      <ul class="scoop-navbar-list">
+        <li *ngIf="canSeeRegisterItem()" 
+            routerLink="/registro-usuario" 
+            routerLinkActive="active" 
+            class="scoop-navbar-item" 
+            (click)="closeSidebar()">
+          <span class="material-icons">person_add</span>
+          <span>Registro</span>
+        </li>
+
+        <li *ngIf="canSeeAdminItems()" 
+            [routerLink]="['/dashboard/admin']" 
+            routerLinkActive="active" 
+            class="scoop-navbar-item" 
+            (click)="closeSidebar()">
+          <span class="material-icons">admin_panel_settings</span>
+          <span>Admins</span>
+        </li>
+
+        <li *ngIf="canSeeTeacherItems()" 
+            [routerLink]="['/dashboard/profesor']" 
+            routerLinkActive="active" 
+            class="scoop-navbar-item" 
+            (click)="closeSidebar()">
+          <span class="material-icons">people</span>
+          <span>Maestros</span>
+        </li>
+
+        <li *ngIf="canSeeStudentItems()" 
+            [routerLink]="['/dashboard/alumno']" 
+            routerLinkActive="active" 
+            class="scoop-navbar-item" 
+            (click)="closeSidebar()">
+          <span class="material-icons">school</span>
+          <span>Alumnos</span>
+        </li>
+
+        <li *ngIf="canSeeStudentItems()" 
+            routerLink="/dashboard/graficas" 
+            routerLinkActive="active" 
+            class="scoop-navbar-item" 
+            (click)="closeSidebar()">
+          <span class="material-icons">bar_chart</span>
+          <span>Gráficas</span>
+        </li>
+
+        <li *ngIf="canSeeTeacherItems()" 
+            routerLink="/dashboard/eventos" 
+            routerLinkActive="active" 
+            class="scoop-navbar-item" 
+            (click)="closeSidebar()">
+          <span class="material-icons">event</span>
+          <span>Eventos Académicos</span>
+        </li>
+      </ul>
+
+      <button class="scoop-logout-btn" (click)="logout(); closeSidebar()">
+        <span class="material-icons">logout</span>
+        <span>Cerrar sesión</span>
+      </button>
+    </nav>
+  </ng-container>
+</div>
