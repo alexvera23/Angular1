@@ -1,0 +1,199 @@
+// Estilos para el componente admin (y aplicables a profesores y alumnos)
+
+// El contenedor principal no necesita estilos extra
+:host {
+  display: block;
+  width: 100%;
+}
+
+// Contenedor del dashboard - SIN PADDING
+.admin-dashboard,
+.profesor-dashboard,
+.alumno-dashboard {
+  width: 100%;
+  max-width: 100%;
+  padding: 0; // Eliminamos cualquier padding que pueda empujar el contenido
+  margin: 0;  // Eliminamos márgenes
+}
+
+// Estilos para la tarjeta principal
+mat-card {
+  background-color: var(--table-bg, #fff);
+  color: var(--text-main, #222);
+  width: 100%;
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  border: none;
+  margin-bottom: 2rem;
+}
+
+// Avatar en el header
+.admin-avatar {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50%;
+}
+
+// Encabezado de la tarjeta
+mat-card-header {
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+
+  mat-card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--sidebar-bg, #23395d);
+    margin-bottom: 0.5rem;
+  }
+
+  mat-card-subtitle {
+    font-size: 0.95rem;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}
+
+// Contenido de la tarjeta
+mat-card-content {
+  padding: 1rem 1.5rem;
+
+  p {
+    margin-bottom: 1.5rem;
+    color: var(--text-main, #222);
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--sidebar-bg, #23395d);
+    margin-bottom: 1rem;
+  }
+}
+
+// Contenedor de la tabla con scroll horizontal
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  margin-top: 1rem;
+  
+  // Sombra sutil
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+// Estilos de la tabla
+.mat-mdc-table {
+  width: 100%;
+  min-width: 700px; // Ancho mínimo para forzar scroll si es necesario
+  background-color: var(--table-bg, #fff);
+  border-collapse: collapse;
+}
+
+// Filas del header
+.mat-mdc-header-row {
+  background-color: var(--table-header-bg, #cfe2ff);
+  
+  .mat-mdc-header-cell {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--sidebar-bg, #23395d);
+    padding: 1rem;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Filas de datos
+.mat-mdc-row {
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+  
+  .mat-mdc-cell {
+    font-size: 0.9rem;
+    color: var(--text-main, #222);
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+}
+
+// Lista de acciones (si existe)
+mat-list {
+  .mat-mdc-list-item {
+    padding: 0.5rem 0;
+  }
+}
+
+// Botones
+.mat-mdc-raised-button {
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  
+  &[color="warn"] {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+    }
+  }
+  
+  &[color="primary"] {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(63, 81, 181, 0.3);
+    }
+  }
+}
+
+// Media Queries para responsive
+@media (max-width: 992px) {
+  mat-card {
+    border-radius: 8px;
+  }
+
+  mat-card-header {
+    mat-card-title {
+      font-size: 1.25rem;
+    }
+  }
+  
+  .mat-mdc-table {
+    min-width: 600px; // Reducimos el ancho mínimo en tablets
+  }
+}
+
+@media (max-width: 768px) {
+  // En móvil, la tarjeta debe ocupar todo el espacio disponible
+  .admin-dashboard,
+  .profesor-dashboard,
+  .alumno-dashboard {
+    padding: 0;
+  }
+
+  mat-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    border-radius: 8px;
+  }
+
+  mat-card-content {
+    padding: 0.75rem 1rem;
+  }
+
+  mat-card-header {
+    mat-card-title {
+      font-size: 1.15rem;
+    }
+  }
+
+  .mat-mdc-table {
+    min-width: 500px; // Aún más pequeño en móviles
+  }
+
+  .mat-mdc-header-cell,
+  .mat-mdc-cell {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+  }
+}

@@ -32,7 +32,7 @@ export class AdminComponent {
 
 
   // Columnas a mostrar
-  public displayedAdminsColumns: string[] = ['username', 'first_name', 'last_name', 'email', 'clave_admin', 'rfc'];
+  public displayedAdminsColumns: string[] = ['username', 'first_name', 'last_name', 'email', 'clave_admin', 'rfc', 'acciones'];
   ngOnInit(): void {
     // Obtenemos datos del token
     this.username = this.authService.getUsername();

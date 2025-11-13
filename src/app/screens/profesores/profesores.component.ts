@@ -1,10 +1,12 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MATERIAL_MODULES } from '../../shared/shared-material';
 import { AuthService } from '../../services/auth.service';
 import { FacadeService } from '../../services/facade.service';
 import { UserDataService } from '../../services/user-data.service';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-admin',
@@ -19,18 +21,21 @@ import { UserDataService } from '../../services/user-data.service';
   templateUrl: './profesores.component.html',
   styleUrl: './profesores.component.scss'
 })
-export class ProfesoresComponent implements OnInit {
+export class ProfesoresComponent implements OnInit, AfterViewInit {
   private authService = inject(AuthService);
   private facadeService = inject(FacadeService)
   private userDataService = inject(UserDataService);
+
   // Propiedades para datos dinámicos
   public username: string | null = null;
   public userRole: string | null = null;
 
-  public listaMaestros: any[] = [];
+  public listaMaestros = new MatTableDataSource<any>();
 
-  public displayedMaestrosColumns: string[] = ['first_name', 'last_name', 'email', 'area_investigacion', 'cubiculo'];
+  public displayedMaestrosColumns: string[] = ['n_empleado','first_name', 'last_name', 'email','fecha_nacimiento','telefono', 'area_investigacion', 'cubiculo','acciones'];
   
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   ngOnInit(): void {
     // Obtenemos datos del token
     this.username = this.authService.getUsername();
@@ -39,12 +44,16 @@ export class ProfesoresComponent implements OnInit {
   }
   private loadMaestros(): void {
     this.userDataService.getMaestros().subscribe(
-      data => this.listaMaestros = data
+      data => this.listaMaestros.data = data
     );
   }
   public logout() {
     this.authService.logout();
     this.facadeService.openSnackBar('Sesión cerrada correctamente :).', 'OK');
+  }
+
+  ngAfterViewInit(): void {
+    this.listaMaestros.paginator = this.paginator;
   }
 
 

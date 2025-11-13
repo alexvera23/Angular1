@@ -29,7 +29,7 @@ export class AlumnoComponent implements OnInit {
 
 
   // Columnas a mostrar
- public displayedAlumnosColumns: string[] = ['first_name', 'last_name', 'email', 'matricula'];
+ public displayedAlumnosColumns: string[] = ['first_name', 'last_name', 'email', 'matricula', 'acciones'];
   ngOnInit(): void {
     // Obtenemos datos del token
     this.username = this.authService.getUsername();
@@ -40,7 +40,7 @@ export class AlumnoComponent implements OnInit {
   }
 
 private loadAlumnos(): void {
-    this.userDataService.getAdministradores().subscribe(
+    this.userDataService.getAlumnos().subscribe(
       data => this.listaAlumnos = data
     );
   }

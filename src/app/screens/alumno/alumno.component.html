@@ -1,4 +1,4 @@
-<div class="alumno-dashboard p-4">
+<div class="alumno-dashboard">
   <mat-card>
     
     <div [ngSwitch]="userRole">
@@ -52,11 +52,29 @@
             <th mat-header-cell *matHeaderCellDef> Matrícula </th>
             <td mat-cell *matCellDef="let element"> {{element.matricula}} </td>
           </ng-container>
+          
+          <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button color="primary" aria-label="Editar profesor">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" aria-label="Eliminar profesor">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedAlumnosColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedAlumnosColumns;"></tr>
         </table>
       </div>
+      <mat-list role="list" class="mt-4">
+        <h3 mat-subheader>Acciones Rápidas</h3>
+        <mat-list-item role="listitem">Gestión de Cursos</mat-list-item>
+        
+      </mat-list>
     </mat-card-content>
   </mat-card>
+  
 </div>

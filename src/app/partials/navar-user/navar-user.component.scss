@@ -8,10 +8,10 @@
   --table-header-bg: #cfe2ff;
 }
 
+// IMPORTANTE: El wrapper NO debe usar flex ni min-height
 .navbar-sidebar-wrapper {
-  display: flex;
-  min-height: 100vh;
-  background-color: var(--background-main);
+  position: relative;
+  width: 100%;
 }
 
 // ========== SIDEBAR LATERAL ==========
@@ -198,15 +198,6 @@
   }
 }
 
-// ========== CONTENIDO PRINCIPAL ==========
-.dashboard-content {
-  margin-left: 250px;
-  margin-top: 60px;
-  padding: 2rem;
-  flex-grow: 1;
-  min-height: calc(100vh - 60px);
-}
-
 // ========== RESPONSIVE - MOBILE ==========
 @media (max-width: 992px) {
   .scoop-side-navbar {
@@ -219,10 +210,6 @@
 
   .scoop-navbar {
     left: 0;
-  }
-
-  .dashboard-content {
-    margin-left: 0;
   }
 
   .mobile-sidebar-overlay {

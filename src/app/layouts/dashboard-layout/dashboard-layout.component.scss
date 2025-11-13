@@ -1,17 +1,40 @@
 /* Estilos básicos para el layout del dashboard */
-// Estilos para el contenido del dashboard
-.dashboard-content {
-  margin-left: 250px; // Espacio para el sidebar
-  margin-top: 60px;   // Espacio para el navbar superior
-  padding: 2rem;
-  min-height: calc(100vh - 60px);
-  background-color: var(--background-main, #f4f7fb);
+
+// Wrapper que contiene TODO el dashboard
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
 }
 
-// Responsive para móviles
-@media (max-width: 992px) {
-  .dashboard-content {
-    margin-left: 0; // En móvil no hay sidebar fijo
-    padding: 1rem;
+// Contenedor principal
+.dashboard-container {
+  min-height: 100vh;
+  padding-top: 60px; // Espacio para el navbar fijo superior
+  
+  // En desktop, dejamos espacio para el sidebar lateral
+  @media (min-width: 993px) {
+    margin-left: 250px; // Espacio para el sidebar fijo
+  }
+  
+  // En móvil no hay margen porque el sidebar se oculta
+  @media (max-width: 992px) {
+    margin-left: 0;
+  }
+}
+
+// Contenido principal donde se renderizan las screens
+.dashboard-main-content {
+  width: 100%;
+  padding: 1.5rem; // Reducimos el padding de 2rem a 1.5rem
+  background-color: var(--background-main, #f4f7fb);
+  min-height: calc(100vh - 60px); // Altura mínima menos el navbar
+  
+  // Aseguramos que el contenido no se desborde horizontalmente
+  overflow-x: hidden;
+  
+  // En móvil reducimos el padding aún más
+  @media (max-width: 768px) {
+    padding: 0.75rem; // Reducimos a 0.75rem en móvil
   }
 }
