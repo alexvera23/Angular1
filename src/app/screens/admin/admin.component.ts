@@ -1,11 +1,12 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, AfterViewInit, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MATERIAL_MODULES } from '../../shared/shared-material';
 import { AuthService } from '../../services/auth.service';
 import { FacadeService } from '../../services/facade.service';
 import { UserDataService } from '../../services/user-data.service';
-
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 @Component({
   selector: 'app-admin',
   standalone: true,
@@ -19,22 +20,23 @@ import { UserDataService } from '../../services/user-data.service';
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss'
 })
-export class AdminComponent {
+export class AdminComponent implements OnInit, AfterViewInit {
   private authService = inject(AuthService);
   private facadeService = inject(FacadeService);
   private userDataService = inject(UserDataService);
-  // Propiedades para datos dinámicos
+  
   public username: string | null = null;
   public userRole: string | null = null;
 
   // Listas para las tablas
-  public listaAdmins: any[] = [];
+  public listaAdmins = new MatTableDataSource<any>();
 
 
-  // Columnas a mostrar
+
   public displayedAdminsColumns: string[] = ['username', 'first_name', 'last_name', 'email', 'clave_admin', 'rfc', 'acciones'];
+  @ViewChild(MatPaginator) paginator!: MatPaginator; 
   ngOnInit(): void {
-    // Obtenemos datos del token
+    
     this.username = this.authService.getUsername();
     this.userRole = this.authService.getUserRole();
     
@@ -44,7 +46,7 @@ export class AdminComponent {
 
 private loadAdmins(): void {
     this.userDataService.getAdministradores().subscribe(
-      data => this.listaAdmins = data
+      data => this.listaAdmins.data = data
     );
   }
 
@@ -54,5 +56,10 @@ private loadAdmins(): void {
     this.authService.logout();
     this.facadeService.openSnackBar('Sesión cerrada correctamente :).', 'OK');
   }
+
+  ngAfterViewInit(): void {
+    this.listaAdmins.paginator = this.paginator;
+  }
+
 
 }

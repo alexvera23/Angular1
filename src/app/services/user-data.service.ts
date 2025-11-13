@@ -13,23 +13,17 @@ export class UserDataService {
 
   constructor() { }
 
-  /**
-   * Obtiene la lista de usuarios Administradores.
-   */
+  //lista de los administradores :)
   getAdministradores(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/api/users/users/administradores/`);
   }
 
-  /**
-   * Obtiene la lista de usuarios Maestros.
-   */
+  //lista de los maestros :)
   getMaestros(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/api/users/users/maestros/`);
   }
 
-  /**
-   * Obtiene la lista de usuarios Alumnos.
-   */
+ //lista de los alumnos :)
   getAlumnos(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/api/users/users/alumnos/`);
   }

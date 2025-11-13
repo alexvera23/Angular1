@@ -1,5 +1,5 @@
 <div class="navbar-sidebar-wrapper">
-  <!-- Desktop sidebar -->
+
   <nav class="scoop-side-navbar" *ngIf="!isMobileView">
     <div class="sidebar-header">
       <img src="assets/images/fcc_logo.png" alt="Logo BUAP" class="sidebar-logo" />
@@ -7,7 +7,7 @@
     </div>
 
     <ul class="scoop-navbar-list">
-      <!-- Registro de usuarios (Solo Admin y Maestros) -->
+     
       <li *ngIf="canSeeRegisterItem()" 
           routerLink="/registro-usuario" 
           routerLinkActive="active" 
@@ -16,7 +16,7 @@
         <span>Registro</span>
       </li>
 
-      <!-- Administradores (Solo Admin) -->
+     
       <li *ngIf="canSeeAdminItems()" 
           [routerLink]="['/dashboard/admin']" 
           routerLinkActive="active" 
@@ -25,7 +25,7 @@
         <span>Admins</span>
       </li>
 
-      <!-- Maestros (Solo Admin y Maestros) -->
+    
       <li *ngIf="canSeeTeacherItems()" 
           [routerLink]="['/dashboard/profesor']" 
           routerLinkActive="active" 
@@ -34,7 +34,7 @@
         <span>Maestros</span>
       </li>
 
-      <!-- Alumnos (Todos pueden ver) -->
+     
       <li *ngIf="canSeeStudentItems()" 
           [routerLink]="['/dashboard/alumno']" 
           routerLinkActive="active" 
@@ -43,7 +43,7 @@
         <span>Alumnos</span>
       </li>
 
-      <!-- Gráficas (Todos pueden ver) -->
+     
       <li *ngIf="canSeeStudentItems()" 
           routerLink="/dashboard/graficas" 
           routerLinkActive="active" 
@@ -52,7 +52,7 @@
         <span>Gráficas</span>
       </li>
 
-      <!-- Eventos Académicos (Admin y Maestros) -->
+     
       <li *ngIf="canSeeTeacherItems()" 
           routerLink="/dashboard/eventos" 
           routerLinkActive="active" 
@@ -62,16 +62,15 @@
       </li>
     </ul>
 
-    <!-- Botón de logout en el sidebar -->
+  
     <button class="scoop-logout-btn" (click)="logout()">
       <span class="material-icons">logout</span>
       <span>Cerrar sesión</span>
     </button>
   </nav>
 
-  <!-- Navbar superior (Top bar) -->
   <nav class="scoop-navbar">
-    <!-- Botón de menú móvil -->
+  
     <button class="dashboard-toggle-btn" 
             *ngIf="isMobileView" 
             (click)="toggleSidebar()" 
@@ -79,12 +78,12 @@
       <span class="material-icons">menu_open</span>
     </button>
 
-    <!-- Logo -->
+
     <span class="scoop-navbar-logo">BUAP</span>
 
-    <!-- Iconos de la derecha -->
+    
     <div class="scoop-navbar-icons">
-      <!-- Botón de cambio de tema -->
+    
       <span class="material-icons navbar-icon" 
             (click)="togglePalette()" 
             style="cursor:pointer" 
@@ -103,13 +102,13 @@
 
   <!-- Mobile sidebar overlay y menú móvil -->
   <ng-container *ngIf="isMobileView">
-    <!-- Overlay oscuro cuando el sidebar está abierto -->
+   
     <div class="mobile-sidebar-overlay" 
          [ngClass]="{'mobile-open': mobileOpen}" 
          (click)="closeSidebar()">
     </div>
 
-    <!-- Sidebar móvil -->
+   
     <nav class="scoop-side-navbar" [ngClass]="{'mobile-open': mobileOpen}">
       <div class="sidebar-header">
         <img src="assets/images/fcc_logo.png" alt="Logo BUAP" class="sidebar-logo" />

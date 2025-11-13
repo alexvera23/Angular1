@@ -7,6 +7,7 @@ import { FacadeService } from '../../services/facade.service';
 import { UserDataService } from '../../services/user-data.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatChipsModule } from '@angular/material/chips';
 
 @Component({
   selector: 'app-admin',
@@ -26,18 +27,20 @@ export class ProfesoresComponent implements OnInit, AfterViewInit {
   private facadeService = inject(FacadeService)
   private userDataService = inject(UserDataService);
 
-  // Propiedades para datos dinámicos
+
+  
   public username: string | null = null;
   public userRole: string | null = null;
 
   public listaMaestros = new MatTableDataSource<any>();
 
-  public displayedMaestrosColumns: string[] = ['n_empleado','first_name', 'last_name', 'email','fecha_nacimiento','telefono', 'area_investigacion', 'cubiculo','acciones'];
+  public displayedMaestrosColumns: string[] = ['n_empleado','first_name', 'last_name', 'email','fecha_nacimiento','telefono', 'area_investigacion', 'cubiculo','materias','acciones'];
   
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatChipsModule) chips!: MatChipsModule;
 
   ngOnInit(): void {
-    // Obtenemos datos del token
+    
     this.username = this.authService.getUsername();
     this.userRole = this.authService.getUserRole();
     this.loadMaestros();

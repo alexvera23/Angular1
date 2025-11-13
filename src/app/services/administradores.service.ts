@@ -7,15 +7,12 @@ import { ErrorsService } from './tools/error.service';
 })
 export class AdministradoresService {
 
-  // Inyección de dependencias moderna con `inject()`
   private validatorService = inject(ValidatorService);
   private errorsService = inject(ErrorsService);
 
   constructor() { }
 
-  /**
-   * Devuelve un objeto con la estructura de datos para un nuevo administrador.
-   */
+ 
   public esquemaAdmin() {
     return {
       clave_admin: '',
@@ -54,9 +51,10 @@ export class AdministradoresService {
     if (!this.validatorService.required(data.telefono)) {
       errors.telefono = this.errorsService.required('Teléfono');
     }
-    // ... aquí puedes agregar el resto de las validaciones (RFC, edad, etc.)
+    
 
     // Validaciones de contraseña solo si no estamos en modo "editar"
+    // Aun no se implementa la edición de contraseña :(
     if (!editar) {
       if (!this.validatorService.minLength(data.password)) {
         errors.password = this.errorsService.minLength();

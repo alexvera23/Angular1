@@ -29,16 +29,12 @@ export class AuthService {
 
   constructor() { }
 
-  /**
-   * Envía los datos de un nuevo usuario al backend para registrarlo.
-   */
+  // Registro de un nuevo usuario
   register(userData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/api/users/register/`, userData);
   }
 
-  /**
-   * Inicia sesión y guarda los tokens en cookies.
-   */
+  // Login de usuario 
   login(credentials: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/api/token/`, credentials).pipe(
       tap((tokens: any) => {
@@ -47,13 +43,11 @@ export class AuthService {
     );
   }
 
-  /**
-   * Guarda los tokens en cookies seguras.
-   */
+ ///Guarda los token en cookies
   private saveTokens(accessToken: string, refreshToken: string): void {
     const cookieOptions = {
       path: '/',
-      secure: false,       // Cambiar a true en producción (requiere HTTPS)
+      secure: false,       
       sameSite: 'Lax'
     };
 
@@ -80,25 +74,19 @@ export class AuthService {
     );
   }
 
-  /**
-   * Obtiene el token de acceso desde las cookies.
-   */
+  // Obtiene el access token desde las cookies.
   getAccessToken(): string | null {
     const token = this.cookieService.get('access_token');
     return token || null;
   }
 
-  /**
-   * Obtiene el refresh token desde las cookies.
-   */
+  // Obtiene el refresh token desde las cookies.
   getRefreshToken(): string | null {
     const token = this.cookieService.get('refresh_token');
     return token || null;
   }
 
-  /**
-   * Decodifica el token y obtiene el payload con la información del usuario.
-   */
+  // Decodifica el token y obtiene el payload con la información del usuario.
   getTokenPayload(): TokenPayload | null {
     const token = this.getAccessToken();
     
@@ -115,33 +103,25 @@ export class AuthService {
     }
   }
 
-  /**
-   * Obtiene el rol del usuario desde el token.
-   */
+  // Obtiene el rol del usuario desde el token.
   getUserRole(): string | null {
     const payload = this.getTokenPayload();
     return payload ? payload.rol : null;
   }
 
-  /**
-   * Obtiene el ID del usuario desde el token.
-   */
+  // Obtiene el ID del usuario desde el token.
   getUserId(): number | null {
     const payload = this.getTokenPayload();
     return payload ? payload.user_id : null;
   }
 
-  /**
-   * Obtiene el username del usuario desde el token.
-   */
+  // Obtiene el nombre de usuario desde el token.
   getUsername(): string | null {
     const payload = this.getTokenPayload();
     return payload ? payload.username : null;
   }
 
-  /**
-   * Verifica si el usuario está autenticado.
-   */
+  // Verifica si el usuario está logueado (token válido y no expirado).
   isLoggedIn(): boolean {
     const token = this.getAccessToken();
     
@@ -156,7 +136,7 @@ export class AuthService {
         return false;
       }
 
-      // Verificar si el token ha expirado (exp está en segundos, Date.now() en milisegundos)
+      // Verificar si el token ha expirado 
       const currentTime = Date.now() / 1000;
       return payload.exp > currentTime;
     } catch (error) {
@@ -164,9 +144,7 @@ export class AuthService {
     }
   }
 
-  /**
-   * Cierra la sesión eliminando las cookies.
-   */
+ // Cierra la sesión del usuario eliminando las cookies.
   logout(): void {
     this.cookieService.delete('access_token', '/');
     this.cookieService.delete('refresh_token', '/');
@@ -175,9 +153,7 @@ export class AuthService {
     
   }
 
-  /**
-   * Refresca el access token usando el refresh token.
-   */
+// Refresca el access token usando el refresh token.
   refreshToken(): Observable<any> {
     const refreshToken = this.getRefreshToken();
     
@@ -208,9 +184,7 @@ export class AuthService {
     );
   }
 
-  /**
-   * Obtiene la ruta de dashboard según el rol del usuario.
-   */
+ // Obtiene la ruta del dashboard según el rol del usuario.
   getDashboardRoute(): string {
     const role = this.getUserRole();
     

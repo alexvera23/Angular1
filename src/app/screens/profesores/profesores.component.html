@@ -63,6 +63,22 @@
             <td mat-cell *matCellDef="let element"> {{element.cubiculo}} </td>
           </ng-container>
 
+      <ng-container matColumnDef="materias">
+        <th mat-header-cell *matHeaderCellDef> Materias Asignadas </th>
+        <td mat-cell *matCellDef="let element">
+          <div class="chip-list" aria-label="Materias del profesor" role="list">
+            <ng-container *ngIf="element.materias_info && element.materias_info.length > 0; else noMaterias">
+              <span class="chip" *ngFor="let materia of element.materias_info" role="listitem">
+                {{materia.nombre}}
+              </span>
+            </ng-container>
+            <ng-template #noMaterias>
+              <span style="font-style: italic; color: #888;">Ninguna</span>
+            </ng-template>
+          </div>
+        </td>
+      </ng-container>
+
           <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> Acciones </th>
         <td mat-cell *matCellDef="let element">

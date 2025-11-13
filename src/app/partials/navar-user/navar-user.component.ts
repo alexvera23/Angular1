@@ -74,9 +74,7 @@ export class NavbarUserComponent implements OnInit {
     }
   }
 
-  /**
-   * Inicializa los datos del usuario desde el token
-   */
+  // Inicializa los datos del usuario desde el token
   private initializeUserData(): void {
     const username = this.authService.getUsername();
     const role = this.authService.getUserRole();
@@ -91,17 +89,13 @@ export class NavbarUserComponent implements OnInit {
     this.userRole = role || '';
   }
 
-  /**
-   * Alterna entre tema claro y oscuro
-   */
+// Cambia entre modo claro y oscuro
   togglePalette(): void {
     this.paletteMode = this.paletteMode === 'light' ? 'dark' : 'light';
     this.applyPalette(this.paletteMode);
   }
 
-  /**
-   * Aplica la paleta de colores seleccionada
-   */
+  // Aplica la paleta de colores seleccionada
   private applyPalette(mode: 'light' | 'dark'): void {
     const palette = this.colorPalettes[mode];
     Object.keys(palette).forEach(key => {
@@ -137,9 +131,7 @@ export class NavbarUserComponent implements OnInit {
     this.expandedMenu = null;
   }
 
-  /**
-   * Cierra la sesión del usuario
-   */
+ // Cierra la sesión del usuario
   logout(): void {
     this.authService.logout();
     this.facadeService.openSnackBar('Sesión cerrada correctamente');
@@ -181,9 +173,7 @@ export class NavbarUserComponent implements OnInit {
     return this.isAdmin() || this.isTeacher();
   }
 
-  /**
-   * Obtiene el nombre del rol en español
-   */
+  // Obtiene el nombre del rol para mostrar en la interfaz
   getRoleName(): string {
     switch(this.userRole) {
       case 'administrador':

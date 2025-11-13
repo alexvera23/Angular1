@@ -1,8 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-// NOTA: Para que MatSnackBar funcione, debes importarlo en el componente que lo usa
-// o globalmente en `app.config.ts` (lo veremos después).
+
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +20,7 @@ export class FacadeService {
    */
   public openSnackBar(message: string, action: string = 'Cerrar', config?: any) {
     this.snackBar.open(message, action, {
-      duration: 5000, // 5 segundos
+      duration: 2000, // 2 segundos
       verticalPosition: 'top',
       horizontalPosition: 'end',
       ...config // Permite sobreescribir la configuración por defecto

@@ -13,9 +13,7 @@ export class MateriasService {
 
   constructor() { }
 
-  /**
-   * Obtiene la lista de todas las materias desde el backend.
-   */
+  //obtenemos la lista de materias :)
   getMaterias(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/api/users/materias/`);
   }

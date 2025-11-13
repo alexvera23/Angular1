@@ -60,6 +60,13 @@
           <tr mat-header-row *matHeaderRowDef="displayedAdminsColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedAdminsColumns;"></tr>
         </table>
+
+         <mat-paginator 
+      [pageSizeOptions]="[5, 10, 25]" 
+      showFirstLastButtons
+      aria-label="Seleccionar página de maestros">
+    </mat-paginator>
+    
       </div>
       
       <mat-list role="list" class="mt-4">
