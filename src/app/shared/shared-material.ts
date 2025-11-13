@@ -14,6 +14,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
+import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
 
 // Array con todos los módulos de Material
 export const MATERIAL_MODULES = [
@@ -29,7 +31,9 @@ export const MATERIAL_MODULES = [
   MatSnackBarModule,
   MatCardModule,
   MatDividerModule,
-  MatListModule
+  MatListModule,
+  MatTableModule,
+  MatTabsModule
 ];
 
 // También puedo exportar módulos individuales por si quiero importarlos de forma específica
@@ -46,5 +50,7 @@ export {
   MatSnackBarModule,
   MatCardModule,
   MatDividerModule,
-  MatListModule
+  MatListModule,
+  MatTableModule,
+  MatTabsModule
 };

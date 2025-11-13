@@ -1,0 +1,111 @@
+// Pega esto en admin.component.scss, profesores.component.scss, etc.
+
+:host {
+  display: block;
+  width: 100%;
+  // No necesitamos padding aquí, tu clase .dashboard-content ya lo tiene.
+}
+
+mat-card {
+  // Usamos tus variables CSS para el fondo y el texto
+  background-color: var(--table-bg, #fff);
+  color: var(--text-main, #222);
+
+  // Mantenemos el centrado y ancho máximo
+  max-width: 1200px;
+  margin: 0 auto; 
+  width: 100%;
+
+  // Mejoramos la apariencia
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important; // Sombra sutil
+  border: none;
+}
+
+// Encabezado de la tarjeta
+mat-card-header {
+  padding-bottom: 1rem;
+
+  mat-card-title {
+    font-size: 1.35rem;
+    font-weight: 600;
+    // Usamos el color principal de tu sidebar para consistencia
+    color: var(--sidebar-bg, #23395d);
+  }
+}
+
+// Contenedor de la tabla (para responsividad)
+.table-container {
+  width: 100%;
+  
+  // ¡LA PARTE RESPONSIVA MÁS IMPORTANTE!
+  // Permite scroll horizontal SOLO en la tabla
+  overflow-x: auto;
+  
+  // Damos un borde al contenedor de la tabla
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px; // Esquinas redondeadas
+  overflow: hidden; // Para que la tabla interna respete el border-radius
+}
+
+.mat-table {
+  width: 100%; // La tabla ocupa el 100% de su contenedor
+  
+  // Un ancho mínimo para forzar el scroll horizontal si no cabe
+  min-width: 700px; 
+  
+  background-color: var(--table-bg, #fff);
+}
+
+// Celdas del Encabezado (Header)
+.mat-header-cell {
+  // Usamos tu variable para el fondo del header
+  background-color: var(--table-header-bg, #cfe2ff);
+  
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--sidebar-bg, #23395d);
+  padding: 0 1rem;
+}
+
+// Celdas de datos
+.mat-cell {
+  font-size: 0.9rem;
+  color: var(--text-main, #222);
+  padding: 0 1rem;
+  border-bottom-color: rgba(0, 0, 0, 0.05);
+}
+
+// Botón de Cerrar Sesión (si lo tienes en esta pantalla)
+.mat-raised-button[color="warn"] {
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+  }
+}
+
+// --- Media Queries para Móviles ---
+@media (max-width: 768px) {
+  // Hacemos que la tarjeta ocupe todo el espacio
+  // ya que .dashboard-content tiene padding
+  mat-card {
+    padding: 0.5rem;
+  }
+
+  mat-card-title {
+    font-size: 1.15rem;
+  }
+
+  // Reducimos el ancho mínimo de la tabla en móviles
+  .mat-table {
+    min-width: 600px;
+  }
+
+  .mat-header-cell, .mat-cell {
+    padding: 0 0.75rem;
+  }
+}
