@@ -25,7 +25,8 @@ mat-card {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
   border: none;
-  margin-bottom: 2rem;
+  margin: 0; // Eliminamos el margen inferior que empuja el contenido
+  padding: 1.5rem; // Agregamos padding interno
 }
 
 // Avatar en el header
@@ -38,27 +39,28 @@ mat-card {
 // Encabezado de la tarjeta
 mat-card-header {
   padding-bottom: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem; // Reducimos el margen
 
   mat-card-title {
     font-size: 1.5rem;
     font-weight: 600;
     color: var(--sidebar-bg, #23395d);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem; // Reducimos el margen
   }
 
   mat-card-subtitle {
     font-size: 0.95rem;
     color: rgba(0, 0, 0, 0.6);
+    margin-bottom: 0; // Eliminamos margen inferior
   }
 }
 
 // Contenido de la tarjeta
 mat-card-content {
-  padding: 1rem 1.5rem;
+  padding: 0.5rem 0; // Reducimos el padding dramáticamente
 
   p {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem; // Reducimos el margen
     color: var(--text-main, #222);
   }
 
@@ -66,7 +68,23 @@ mat-card-content {
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--sidebar-bg, #23395d);
-    margin-bottom: 1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.75rem; // Reducimos el margen
+  }
+}
+
+// Campo de filtrado/búsqueda
+.filter-field {
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 1rem;
+  
+  .mat-mdc-form-field-wrapper {
+    padding-bottom: 0;
+  }
+  
+  .mat-mdc-text-field-wrapper {
+    background-color: rgba(0, 0, 0, 0.02);
   }
 }
 
@@ -76,7 +94,8 @@ mat-card-content {
   overflow-x: auto;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 8px;
-  margin-top: 1rem;
+  margin-top: 0.5rem; // Reducimos el margen superior
+  margin-bottom: 0; // Sin margen inferior
   
   // Sombra sutil
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);

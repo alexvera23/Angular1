@@ -12,8 +12,25 @@
       <p>Bienvenido. Desde aquí puedes gestionar la lista de administradores del sistema.</p>
       
       <h3 class="mt-3">Lista de Administradores</h3>
+      <!-- Campo de búsqueda/filtrado -->
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Buscar administrador</mat-label>
+        <input matInput 
+               (keyup)="applyFilterAdmins($event)" 
+               placeholder="Usuario, nombre, email..."
+               #input>
+        <mat-icon matPrefix>search</mat-icon>
+        <button mat-icon-button matSuffix 
+                *ngIf="input.value" 
+                (click)="clearFilter(input)"
+                aria-label="Limpiar búsqueda">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <!-- Tabla con sorting -->
       <div class="mat-elevation-z4 table-container mt-3">
-        <table mat-table [dataSource]="listaAdmins">
+        <table mat-table [dataSource]="listaAdmins" matSort>
 
           <ng-container matColumnDef="username">
             <th mat-header-cell *matHeaderCellDef> Usuario </th>
@@ -59,6 +76,16 @@
 
           <tr mat-header-row *matHeaderRowDef="displayedAdminsColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedAdminsColumns;"></tr>
+
+          <tr class="mat-row">
+            <td class="mat-cell" [attr.colspan]="displayedAdminsColumns.length">
+              <div class="no-data-message">
+                <mat-icon>search_off</mat-icon>
+                <p *ngIf="input.value">No se encontraron resultados para "{{input.value}}"</p>
+                <p *ngIf="!input.value">No hay maestros registrados</p>
+              </div>
+            </td>
+          </tr>
         </table>
 
          <mat-paginator 

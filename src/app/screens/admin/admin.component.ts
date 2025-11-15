@@ -7,6 +7,7 @@ import { FacadeService } from '../../services/facade.service';
 import { UserDataService } from '../../services/user-data.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
 @Component({
   selector: 'app-admin',
   standalone: true,
@@ -35,6 +36,7 @@ export class AdminComponent implements OnInit, AfterViewInit {
 
   public displayedAdminsColumns: string[] = ['username', 'first_name', 'last_name', 'email', 'clave_admin', 'rfc', 'acciones'];
   @ViewChild(MatPaginator) paginator!: MatPaginator; 
+  @ViewChild(MatSort) sort!: MatSort;
   ngOnInit(): void {
     
     this.username = this.authService.getUsername();
@@ -42,12 +44,58 @@ export class AdminComponent implements OnInit, AfterViewInit {
     
     // Cargamos los datos para las tablas
     this.loadAdmins();  
+
+    this.listaAdmins.filterPredicate = this.createFilter();
+
+    
   }
 
 private loadAdmins(): void {
-    this.userDataService.getAdministradores().subscribe(
-      data => this.listaAdmins.data = data
-    );
+    this.userDataService.getAdministradores().subscribe({
+      next: (data) => {
+        this.listaAdmins.data = data;
+        console.log('Datos de admins cargados:', data);
+      },
+      error: (err) => {
+        console.error('Error al cargar datos de admins:', err);
+        this.facadeService.openSnackBar('Error al cargar datos de administradores.', 'OK');
+      }
+    });
+    
+  }
+
+  applyFilterAdmins(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.listaAdmins.filter = filterValue.trim().toLowerCase(); 
+
+    if (this.listaAdmins.paginator) {
+      this.listaAdmins.paginator.firstPage();
+    }
+  }
+
+  clearFilter(input: HTMLInputElement): void {
+    input.value = '';
+    this.listaAdmins.filter = '';
+
+    if (this.listaAdmins.paginator) {
+      this.listaAdmins.paginator.firstPage();
+    }
+  }
+
+  private createFilter(): (data: any, filter: string) => boolean {
+    return (data: any, filter: string): boolean => {
+      const searchStr = filter.toLowerCase();
+
+      // Busacar en campos de admin 
+      const basicMatch = 
+      data.clave_admin?.toString().toLowerCase().includes(searchStr) ||
+      data.first_name?.toLowerCase().includes(searchStr) ||
+      data.last_name?.toLowerCase().includes(searchStr) ||
+      data.email?.toLowerCase().includes(searchStr) ||
+      data.rfc?.toLowerCase().includes(searchStr);
+
+      return basicMatch ;
+    };
   }
 
 
@@ -59,6 +107,7 @@ private loadAdmins(): void {
 
   ngAfterViewInit(): void {
     this.listaAdmins.paginator = this.paginator;
+    this.listaAdmins.sort = this.sort;
   }
 
 
