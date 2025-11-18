@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Location, CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 
 // Importación de los módulos de Material
 import { MATERIAL_MODULES } from '../../shared/shared-material';
@@ -28,6 +29,8 @@ export class RegistroAdminComponent implements OnInit {
   public adminForm: FormGroup;
   public editar: boolean = false;
   public hide: boolean = true; // Para el botón de mostrar/ocultar contraseña
+  private currentUserID: string | null = null;
+  public pageTitle: string = "Registro de Administrador";
   
   // Inyección de dependencias
   private fb = inject(FormBuilder);
@@ -35,6 +38,8 @@ export class RegistroAdminComponent implements OnInit {
   private administradoresService = inject(AdministradoresService);
   private facadeService = inject(FacadeService);
   private authService = inject(AuthService); // Inyecta el servicio AuthService
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   constructor() {
     const adminSchema = this.administradoresService.esquemaAdmin();
@@ -55,7 +60,42 @@ export class RegistroAdminComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.adminForm.patchValue({ rol: this.rol });
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        // --- MODO EDICIÓN ---
+        this.editar = true;
+        this.currentUserID = id;
+        this.pageTitle = 'Editar Administrador'; // Cambia el título
+
+        // Quita 'required' de la contraseña
+        this.adminForm.get('password')?.clearValidators();
+        this.adminForm.get('password')?.updateValueAndValidity();
+
+        // Deshabilita los campos que no quieres editar
+        this.adminForm.get('email')?.disable();
+        
+        // Llama al servicio para obtener los datos del usuario
+        this.loadUserData(id);
+      } else {
+        // --- MODO CREACIÓN ---
+        this.editar = false;
+        this.pageTitle = 'Registro de Administrador';
+      }
+    });
+  }
+
+  loadUserData(id: string) {
+    this.administradoresService.getUsuarioById(id).subscribe({
+      next: (data) => {
+        // Rellena el formulario con los datos
+        this.adminForm.patchValue(data); 
+      },
+      error: (err) => {
+        console.error("Error al cargar usuario", err);
+        this.facadeService.openSnackBar('Error al cargar datos del usuario', 'OK');
+      }
+    });
   }
 
    public registrar() {
@@ -76,7 +116,7 @@ export class RegistroAdminComponent implements OnInit {
     // 4. Eliminar el campo que el backend no necesita
     delete userData.confirmar_password;
 
-    // 5. ¡Paso de depuración clave! Revisa la consola del navegador
+    // 5. ¡Paso de depuración clave! Revisa la consola del navegadors
     console.log('Datos que se enviarán al backend:', userData);
 
     // 6. Enviar la petición
@@ -105,6 +145,34 @@ export class RegistroAdminComponent implements OnInit {
         }
     });
 }
+
+onSubmit() {
+    if (this.adminForm.invalid) {
+      return;
+    }
+
+    if (this.editar && this.currentUserID) {
+      // --- Lógica de Actualización ---
+      // Habilita temporalmente el email para que su valor se envíe
+      this.adminForm.get('email')?.enable(); 
+      const userData = this.adminForm.value;
+      
+      this.administradoresService.updateUsuario(this.currentUserID, userData).subscribe({
+        next: (response) => {
+          this.facadeService.openSnackBar('Administrador actualizado correctamente', 'OK');
+          this.router.navigate(['/dashboard/admin']);
+        },
+        error: (err) => {
+          this.facadeService.openSnackBar('Error al actualizar', 'OK');
+          this.adminForm.get('email')?.disable(); // Re-deshabilita si falla
+        }
+      });
+
+    } else {
+      this.registrar();
+    }
+  }
+
 
   public actualizar() { 
     console.log("Actualizar administrador");

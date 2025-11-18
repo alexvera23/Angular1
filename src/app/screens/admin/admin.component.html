@@ -65,7 +65,9 @@
           <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> Acciones </th>
         <td mat-cell *matCellDef="let element">
-          <button mat-icon-button color="primary" aria-label="Editar profesor">
+          <button mat-icon-button color="primary" 
+          [routerLink]="['/editar/administrador', element.id]"
+          aria-label="Editar profesor">
             <mat-icon>edit</mat-icon>
           </button>
           <button mat-icon-button color="warn" aria-label="Eliminar profesor">

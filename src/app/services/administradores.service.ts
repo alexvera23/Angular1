@@ -1,6 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { ValidatorService } from './tools/validator.service';
 import { ErrorsService } from './tools/error.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environments';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +12,8 @@ export class AdministradoresService {
 
   private validatorService = inject(ValidatorService);
   private errorsService = inject(ErrorsService);
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.url_api}/api/users/users`;
 
   constructor() { }
 
@@ -66,5 +71,14 @@ export class AdministradoresService {
 
     return errors;
   }
+
+  getUsuarioById(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}/`);
+  }
+
+  updateUsuario(id: string, usuario: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}/`, usuario);
+  }
+
 }
 

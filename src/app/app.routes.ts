@@ -25,7 +25,12 @@ export const routes: Routes = [
         // La URL completa será '/registro-usuario'
         path: 'registro-usuario',
         loadComponent: () => import('./screens/registro-screen/registro-screen.component').then(c => c.RegistroScreenComponent)
-      }
+      },
+      {
+        path: 'editar/administrador/:id',
+        loadComponent: () => import('./partials/registro-admin/registro-admin.component').then(c => c.RegistroAdminComponent)
+      },
+
     ]
   },
 
