@@ -59,6 +59,17 @@ export class RegistroAdminComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // IMPORTANTE: Asignar el rol al formulario desde el @Input
+    // Esto se hace en ngOnInit porque el @Input puede no estar disponible en el constructor
+    if (this.rol) {
+      this.adminForm.patchValue({ rol: this.rol });
+      console.log('Rol asignado desde @Input:', this.rol);
+    } else {
+      // Si no hay rol desde @Input, usar 'administrador' por defecto
+      this.adminForm.patchValue({ rol: 'administrador' });
+      console.log('Rol por defecto asignado: administrador');
+    }
+
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
