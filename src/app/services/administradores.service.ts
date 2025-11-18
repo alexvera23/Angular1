@@ -80,5 +80,9 @@ export class AdministradoresService {
     return this.http.put<any>(`${this.apiUrl}/${id}/`, usuario);
   }
 
+  delateUsuario(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${id}/`);
+  }
+
 }
 

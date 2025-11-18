@@ -30,6 +30,14 @@ export const routes: Routes = [
         path: 'editar/administrador/:id',
         loadComponent: () => import('./partials/registro-admin/registro-admin.component').then(c => c.RegistroAdminComponent)
       },
+      {
+        path : 'editar/profesor/:id',
+        loadComponent: () => import('./partials/registro-profesores/registro-profesores.component').then(c => c.RegistroProfesoresComponent)
+      },
+      {
+        path : 'editar/alumno/:id',
+        loadComponent: () => import('./partials/registro-alumnos/registro-alumnos.component').then(c => c.RegistroAlumnosComponent)
+      }
 
     ]
   },
