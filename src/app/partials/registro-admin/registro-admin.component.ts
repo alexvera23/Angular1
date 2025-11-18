@@ -9,7 +9,6 @@ import { MATERIAL_MODULES } from '../../shared/shared-material';
 // Importaciones de nuestros servicios
 import { AdministradoresService } from '../../services/administradores.service';
 import { FacadeService } from '../../services/facade.service';
-// Importa el nuevo servicio AuthService
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -18,7 +17,7 @@ import { AuthService } from '../../services/auth.service';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    ...MATERIAL_MODULES //  Importamos todos los módulos de Material
+    ...MATERIAL_MODULES
   ],
   templateUrl: './registro-admin.component.html',
   styleUrls: ['./registro-admin.component.scss']
@@ -28,7 +27,7 @@ export class RegistroAdminComponent implements OnInit {
   @Input() rol: string = "";
   public adminForm: FormGroup;
   public editar: boolean = false;
-  public hide: boolean = true; // Para el botón de mostrar/ocultar contraseña
+  public hide: boolean = true;
   private currentUserID: string | null = null;
   public pageTitle: string = "Registro de Administrador";
   
@@ -37,7 +36,7 @@ export class RegistroAdminComponent implements OnInit {
   private location = inject(Location);
   private administradoresService = inject(AdministradoresService);
   private facadeService = inject(FacadeService);
-  private authService = inject(AuthService); // Inyecta el servicio AuthService
+  private authService = inject(AuthService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
@@ -66,16 +65,15 @@ export class RegistroAdminComponent implements OnInit {
         // --- MODO EDICIÓN ---
         this.editar = true;
         this.currentUserID = id;
-        this.pageTitle = 'Editar Administrador'; // Cambia el título
+        this.pageTitle = 'Editar Administrador';
 
-        // Quita 'required' de la contraseña
+        // Quita 'required' de las contraseñas en modo edición
         this.adminForm.get('password')?.clearValidators();
         this.adminForm.get('password')?.updateValueAndValidity();
+        this.adminForm.get('confirmar_password')?.clearValidators();
+        this.adminForm.get('confirmar_password')?.updateValueAndValidity();
 
-        // Deshabilita los campos que no quieres editar
-        this.adminForm.get('email')?.disable();
-        
-        // Llama al servicio para obtener los datos del usuario
+        // Carga los datos del usuario
         this.loadUserData(id);
       } else {
         // --- MODO CREACIÓN ---
@@ -89,94 +87,131 @@ export class RegistroAdminComponent implements OnInit {
     this.administradoresService.getUsuarioById(id).subscribe({
       next: (data) => {
         // Rellena el formulario con los datos
-        this.adminForm.patchValue(data); 
+        this.adminForm.patchValue({
+          clave_admin: data.clave_admin,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          email: data.email,
+          telefono: data.telefono,
+          rfc: data.rfc,
+          edad: data.edad,
+          ocupacion: data.ocupacion,
+          rol: data.rol
+        });
+        
+        // Deshabilita el email para que no se pueda editar
+        this.adminForm.get('email')?.disable();
       },
       error: (err) => {
         console.error("Error al cargar usuario", err);
-        this.facadeService.openSnackBar('Error al cargar datos del usuario', 'OK');
+        this.facadeService.openSnackBar('Error al cargar datos del usuario', 'ERROR');
       }
     });
   }
 
-   public registrar() {
-    // 1. Validar el formulario como siempre
-    if (this.adminForm.invalid) { // Cambia "adminForm" por "alumnoForm" o "maestroForm" según el componente
-        this.adminForm.markAllAsTouched();
-        this.facadeService.openSnackBar('Por favor, corrige los errores.', 'ERROR');
-        return;
-    }
-
-    // 2. Crear una copia de los datos del formulario
-    const userData = { ...this.adminForm.value }; // Usa el nombre de tu form group aquí
-
-    // 3. Asignar el username DIRECTAMENTE desde el control del formulario
-    //    Esto es más seguro que leerlo de la copia.
-    userData.username = this.adminForm.get('email')?.value; // Usa el nombre de tu form group aquí
-
-    // 4. Eliminar el campo que el backend no necesita
-    delete userData.confirmar_password;
-
-    // 5. ¡Paso de depuración clave! Revisa la consola del navegadors
-    console.log('Datos que se enviarán al backend:', userData);
-
-    // 6. Enviar la petición
-    this.authService.register(userData).subscribe({
-        next: (response) => {
-            console.log("Usuario registrado con éxito:", response);
-            this.facadeService.openSnackBar('Registro exitoso');
-            this.adminForm.reset();
-            // Aquí puedes resetear el formulario o redirigir al usuario
-        },
-        error: (err) => {
-            // Esto nos mostrará el error detallado de Django en la consola del navegador
-            console.error("Error detallado del backend:", err.error); 
-            
-            let errorMessage = 'Error en el registro. ';
-            if (err.error && err.error.username) {
-                errorMessage += `Username: ${err.error.username[0]}`;
-            } else if (err.error) {
-                // Para otros posibles errores
-                const errors = Object.values(err.error).flat().join(' ');
-                errorMessage += errors;
-            } else {
-                errorMessage += 'Inténtalo de nuevo.';
-            }
-            this.facadeService.openSnackBar(errorMessage, 'ERROR');
-        }
-    });
-}
-
-onSubmit() {
+  public registrar() {
+    // Validar el formulario
     if (this.adminForm.invalid) {
+      this.adminForm.markAllAsTouched();
+      this.facadeService.openSnackBar('Por favor, corrige los errores.', 'ERROR');
       return;
     }
 
-    if (this.editar && this.currentUserID) {
-      // --- Lógica de Actualización ---
-      // Habilita temporalmente el email para que su valor se envíe
-      this.adminForm.get('email')?.enable(); 
-      const userData = this.adminForm.value;
-      
-      this.administradoresService.updateUsuario(this.currentUserID, userData).subscribe({
-        next: (response) => {
-          this.facadeService.openSnackBar('Administrador actualizado correctamente', 'OK');
-          this.router.navigate(['/dashboard/admin']);
-        },
-        error: (err) => {
-          this.facadeService.openSnackBar('Error al actualizar', 'OK');
-          this.adminForm.get('email')?.disable(); // Re-deshabilita si falla
-        }
-      });
+    // Crear una copia de los datos del formulario
+    const userData = { ...this.adminForm.value };
 
-    } else {
-      this.registrar();
-    }
+    // Asignar el username desde el email
+    userData.username = this.adminForm.get('email')?.value;
+
+    // Eliminar el campo que el backend no necesita
+    delete userData.confirmar_password;
+
+    console.log('Datos que se enviarán al backend:', userData);
+
+    // Enviar la petición
+    this.authService.register(userData).subscribe({
+      next: (response) => {
+        console.log("Usuario registrado con éxito:", response);
+        this.facadeService.openSnackBar('Registro exitoso');
+        this.adminForm.reset();
+        // Opcional: redirigir a la lista de administradores
+        // this.router.navigate(['/dashboard/admin']);
+      },
+      error: (err) => {
+        console.error("Error detallado del backend:", err.error);
+        
+        let errorMessage = 'Error en el registro. ';
+        if (err.error && err.error.username) {
+          errorMessage += `Username: ${err.error.username[0]}`;
+        } else if (err.error) {
+          const errors = Object.values(err.error).flat().join(' ');
+          errorMessage += errors;
+        } else {
+          errorMessage += 'Inténtalo de nuevo.';
+        }
+        this.facadeService.openSnackBar(errorMessage, 'ERROR');
+      }
+    });
   }
 
+  public actualizar() {
+    // Validar el formulario
+    if (this.adminForm.invalid) {
+      this.adminForm.markAllAsTouched();
+      this.facadeService.openSnackBar('Por favor, corrige los errores.', 'ERROR');
+      return;
+    }
 
-  public actualizar() { 
-    console.log("Actualizar administrador");
-    this.facadeService.openSnackBar('Administrador actualizado correctamente');
+    if (!this.currentUserID) {
+      this.facadeService.openSnackBar('Error: No se pudo identificar el usuario', 'ERROR');
+      return;
+    }
+
+    // Habilita temporalmente el email para obtener su valor
+    const emailDisabled = this.adminForm.get('email')?.disabled;
+    if (emailDisabled) {
+      this.adminForm.get('email')?.enable();
+    }
+
+    // Obtener los datos del formulario
+    const userData = { ...this.adminForm.getRawValue() };
+
+    // Si el email estaba deshabilitado, volver a deshabilitarlo
+    if (emailDisabled) {
+      this.adminForm.get('email')?.disable();
+    }
+
+    // Asignar username desde email
+    userData.username = userData.email;
+
+    // Eliminar campos que no necesitamos enviar
+    delete userData.confirmar_password;
+    
+    // Si no hay contraseña nueva, eliminar el campo password
+    if (!userData.password) {
+      delete userData.password;
+    }
+
+    console.log('Datos de actualización:', userData);
+
+    // Enviar la actualización
+    this.administradoresService.updateUsuario(this.currentUserID, userData).subscribe({
+      next: (response) => {
+        console.log('Administrador actualizado:', response);
+        this.facadeService.openSnackBar('Administrador actualizado correctamente', 'ÉXITO');
+        // Redirigir a la lista de administradores
+        this.router.navigate(['/dashboard/admin']);
+      },
+      error: (err) => {
+        console.error('Error al actualizar:', err);
+        let errorMessage = 'Error al actualizar. ';
+        if (err.error) {
+          const errors = Object.values(err.error).flat().join(' ');
+          errorMessage += errors;
+        }
+        this.facadeService.openSnackBar(errorMessage, 'ERROR');
+      }
+    });
   }
   
   public regresar() { 
