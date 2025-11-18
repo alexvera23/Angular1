@@ -70,7 +70,7 @@
           aria-label="Editar profesor">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button color="warn" aria-label="Eliminar profesor">
+          <button mat-icon-button color="warn"(click)="eliminarUsuario(element.id,element.username)" aria-label="Eliminar profesor">
             <mat-icon>delete</mat-icon>
           </button>
         </td>

@@ -8,6 +8,9 @@ import { UserDataService } from '../../services/user-data.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../partials/confirm-dialog/confirm-dialog.component';
+import { AdministradoresService } from '../../services/administradores.service';
 @Component({
   selector: 'app-admin',
   standalone: true,
@@ -25,6 +28,8 @@ export class AdminComponent implements OnInit, AfterViewInit {
   private authService = inject(AuthService);
   private facadeService = inject(FacadeService);
   private userDataService = inject(UserDataService);
+  private dialog = inject(MatDialog);
+  private administradoresService = inject(AdministradoresService);
   
   public username: string | null = null;
   public userRole: string | null = null;
@@ -110,5 +115,28 @@ private loadAdmins(): void {
     this.listaAdmins.sort = this.sort;
   }
 
-
+  eliminarUsuario(id: string, username: string): void {
+    const dialogData: ConfirmDialogData = {
+      title: 'Confirmar eliminación',
+      mesage: `¿Estás seguro de que deseas eliminar al administrador <strong>${username}</strong>? Esta acción no se puede deshacer.`
+    };
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: dialogData
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.administradoresService.delateUsuario(id).subscribe({
+          next: () => {
+            this.facadeService.openSnackBar(`Administrador ${username} eliminado correctamente.`, 'OK');
+            this.loadAdmins(); // Recargar la lista de administradores
+          },
+          error: (err) => {
+            console.error('Error al eliminar administrador:', err);
+            this.facadeService.openSnackBar('Error al eliminar administrador.', 'OK');
+          }
+        });
+      }
+    });
+  }
 }
