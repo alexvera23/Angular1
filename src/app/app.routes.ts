@@ -67,13 +67,18 @@ export const routes: Routes = [
         path : 'alumno',
         loadComponent: () => import('./screens/alumno/alumno.component').then(c => c.AlumnoComponent),
         canActivate: [authGuard] // Proteger esta ruta con el AuthGuard
+      },
+      {
+        path : 'graficas',
+        loadComponent: () => import('./screens/graficas-screen/graficas-screen.component').then(c => c.GraficasScreenComponent),
+        canActivate: [authGuard] // Proteger esta ruta con el AuthGuard
       }
 
 
     ]
   },
 
-  // --- RUTA FALLBACK ---
+  
   // Si el usuario escribe cualquier otra URL que no exista, lo redirige a 'login'.
   {
     path: '**',

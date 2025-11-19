@@ -45,7 +45,7 @@
 
      
       <li *ngIf="canSeeStudentItems()" 
-          routerLink="/dashboard/graficas" 
+          [routerLink]="['/dashboard/graficas']" 
           routerLinkActive="active" 
           class="scoop-navbar-item">
         <span class="material-icons">bar_chart</span>
