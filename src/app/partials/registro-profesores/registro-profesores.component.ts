@@ -4,16 +4,13 @@ import { CommonModule, Location } from '@angular/common';
 import { NgxMaskDirective } from 'ngx-mask';
 import { ActivatedRoute, Router } from '@angular/router';
 
-
 // Importación de los módulos de Material
 import { MATERIAL_MODULES } from '../../shared/shared-material';
 
 // Servicios
 import { ProfesoresService } from '../../services/profesores.service';
 import { FacadeService } from '../../services/facade.service';
-//importar el nuevo servicio AuthService
 import { AuthService } from '../../services/auth.service';
-// Importar el servicio de materias
 import { MateriasService } from '../../services/materias.service';
 
 @Component({
@@ -23,7 +20,7 @@ import { MateriasService } from '../../services/materias.service';
     CommonModule,
     ReactiveFormsModule,
     NgxMaskDirective,
-    ...MATERIAL_MODULES //  Importamos todos los módulos de Material
+    ...MATERIAL_MODULES
   ],
   templateUrl: './registro-profesores.component.html',
   styleUrls: ['./registro-profesores.component.scss']
@@ -38,14 +35,17 @@ export class RegistroProfesoresComponent implements OnInit {
   private currentUserID: string | null = null;
   public pageTitle: string = "Registro de Profesor";
   
-  // Simulación de materias que vendrían de una base de datos
+  // Materias del profesor en modo edición
+  private materiasSeleccionadas: string[] = [];
+  
+  // Lista de materias disponibles
   public materiasData: any[] = [];
   
   private fb = inject(FormBuilder);
   private profesoresService = inject(ProfesoresService);
   private facadeService = inject(FacadeService);
-  private authService = inject(AuthService); // Inyecta el servicio AuthService
-  private materiasService = inject(MateriasService); // Inyecta el servicio MateriasService
+  private authService = inject(AuthService);
+  private materiasService = inject(MateriasService);
   private location = inject(Location);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -72,46 +72,78 @@ export class RegistroProfesoresComponent implements OnInit {
     if (this.rol) {
       this.maestroForm.patchValue({ rol: this.rol });
       console.log('Rol establecido en el formulario:', this.rol);
-      this.cargarMaterias();
     } else {
       this.maestroForm.patchValue({ rol: 'maestro' });
       console.log('Rol por defecto asignado: maestro');
     }
+
+    // Cargar las materias disponibles primero
+    this.cargarMaterias();
+
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
+        // --- MODO EDICIÓN ---
         this.editar = true;
         this.pageTitle = "Edición de Profesor";
         this.currentUserID = id;
+        
+        // Quitar validadores de contraseña en modo edición
+        this.maestroForm.get('password')?.clearValidators();
+        this.maestroForm.get('password')?.updateValueAndValidity();
+        this.maestroForm.get('confirmar_password')?.clearValidators();
+        this.maestroForm.get('confirmar_password')?.updateValueAndValidity();
+        
+        // Cargar datos del profesor
         this.loadProfesorData(id);
-      }else{
+      } else {
+        // --- MODO CREACIÓN ---
         this.editar = false;
         this.pageTitle = "Registro de Profesor";
         console.log('Modo registro de profesor');
       }
     });
-    this.cargarMaterias();
   }
 
   loadProfesorData(id: string): void {
     this.profesoresService.getUsuarioById(id).subscribe({
       next: (data) => {
         console.log('Datos del profesor obtenidos:', data);
+        
+        // Convertir la fecha string a objeto Date para el datepicker
+        let fechaNacimiento = null;
+        if (data.fecha_nacimiento) {
+          fechaNacimiento = new Date(data.fecha_nacimiento + 'T00:00:00');
+        }
+        
+        // Guardar las materias seleccionadas
+        this.materiasSeleccionadas = data.materias || [];
+        
         this.maestroForm.patchValue({
           n_empleado: data.n_empleado,
           first_name: data.first_name,
           last_name: data.last_name,
           email: data.email,
-          fecha_nacimiento: data.fecha_nacimiento,
+          fecha_nacimiento: fechaNacimiento,
           telefono: data.telefono,
           cubiculo: data.cubiculo,
           area_investigacion: data.area_investigacion,
         });
-        // Cargar materias seleccionadas
+        
+        // ¡CORRECCIÓN: Cargar las materias en el FormArray!
         const materiasFormArray: FormArray = this.maestroForm.get('materias') as FormArray;
-        data.materias.forEach((materiaId: string) => {
-          materiasFormArray.push(new FormControl(materiaId));
-        });
+        materiasFormArray.clear(); // Limpiar primero
+        
+        if (this.materiasSeleccionadas && this.materiasSeleccionadas.length > 0) {
+          this.materiasSeleccionadas.forEach((materiaId: string) => {
+            materiasFormArray.push(new FormControl(materiaId.toString()));
+          });
+        }
+        
+        // Deshabilitar el email
+        this.maestroForm.get('email')?.disable();
+        
+        console.log('FormArray de materias después de cargar:', materiasFormArray.value);
       },
       error: (err) => {
         console.error('Error al cargar los datos del profesor:', err);
@@ -119,11 +151,13 @@ export class RegistroProfesoresComponent implements OnInit {
       }
     });
   }
+
   // Método para obtener las materias desde el servicio
   cargarMaterias(): void {
     this.materiasService.getMaterias().subscribe({
       next: (data) => {
         this.materiasData = data;
+        console.log('Materias cargadas:', this.materiasData);
       },
       error: (err) => {
         console.error('Error al cargar las materias', err);
@@ -132,15 +166,27 @@ export class RegistroProfesoresComponent implements OnInit {
     });
   }
 
+  // ¡CORRECCIÓN: Verificar si un checkbox está seleccionado!
+  isMateriSelected(materiaId: string): boolean {
+    const materiasFormArray: FormArray = this.maestroForm.get('materias') as FormArray;
+    return materiasFormArray.controls.some(control => control.value === materiaId.toString());
+  }
+
   onCheckboxChange(event: any) {
     const materiasFormArray: FormArray = this.maestroForm.get('materias') as FormArray;
 
     if (event.checked) {
+      // Agregar materia
       materiasFormArray.push(new FormControl(event.source.value));
     } else {
+      // Remover materia
       const index = materiasFormArray.controls.findIndex(x => x.value === event.source.value);
-      materiasFormArray.removeAt(index);
+      if (index !== -1) {
+        materiasFormArray.removeAt(index);
+      }
     }
+    
+    console.log('Materias actuales:', materiasFormArray.value);
   }
 
   registrar() {
@@ -149,27 +195,22 @@ export class RegistroProfesoresComponent implements OnInit {
       this.facadeService.openSnackBar('Por favor, corrige los errores.', 'ERROR');
       return;
     }
+    
     const userData = { ...this.maestroForm.value };
     userData.username = this.maestroForm.get('email')?.value;
     delete userData.confirmar_password;
 
-    // --- ¡AQUÍ ESTÁ LA CORRECCIÓN! ---
-    // 1. Verificamos si la fecha existe
+    // Formatear la fecha de nacimiento
     if (userData.fecha_nacimiento) {
-      // 2. Creamos un nuevo objeto de fecha
       const fecha = new Date(userData.fecha_nacimiento);
-      
-      // 3. Formateamos a YYYY-MM-DD
-      // Obtenemos los componentes y nos aseguramos de que tengan dos dígitos
       const year = fecha.getFullYear();
-      const month = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se suma 1 porque los meses van de 0 a 11
+      const month = ('0' + (fecha.getMonth() + 1)).slice(-2);
       const day = ('0' + fecha.getDate()).slice(-2);
-      
-      // 4. Asignamos la cadena de texto formateada
       userData.fecha_nacimiento = `${year}-${month}-${day}`;
     }
 
     console.log('Datos que se enviarán al backend:', userData);
+    
     this.authService.register(userData).subscribe({
       next: (response) => {
         console.log('Respuesta del servidor:', response);
@@ -188,12 +229,14 @@ export class RegistroProfesoresComponent implements OnInit {
         this.facadeService.openSnackBar(errorMessage, 'ERROR');
       }
     });
-}
+  }
 
   public actualizar() {
     if (this.maestroForm.invalid) {
       this.maestroForm.markAllAsTouched();
       this.facadeService.openSnackBar('Por favor, corrige los errores.', 'ERROR');
+      console.log('Errores del formulario:', this.maestroForm.errors);
+      console.log('Materias value:', this.maestroForm.get('materias')?.value);
       return;
     }
 
@@ -227,15 +270,25 @@ export class RegistroProfesoresComponent implements OnInit {
       delete userData.password;
     }
 
+    // Formatear la fecha de nacimiento
+    if (userData.fecha_nacimiento) {
+      const fecha = new Date(userData.fecha_nacimiento);
+      if (!isNaN(fecha.getTime())) {
+        const year = fecha.getFullYear();
+        const month = ('0' + (fecha.getMonth() + 1)).slice(-2);
+        const day = ('0' + fecha.getDate()).slice(-2);
+        userData.fecha_nacimiento = `${year}-${month}-${day}`;
+      }
+    }
+
     console.log('Datos de actualización:', userData);
 
     // Enviar la actualización
     this.profesoresService.updateUsuario(this.currentUserID, userData).subscribe({
       next: (response) => {
-        console.log('Administrador actualizado:', response);
-        this.facadeService.openSnackBar('Administrador actualizado correctamente', 'ÉXITO');
-        // Redirigir a la lista de administradores
-        this.router.navigate(['/dashboard/admin']);
+        console.log('Profesor actualizado:', response);
+        this.facadeService.openSnackBar('Profesor actualizado correctamente', 'ÉXITO');
+        this.router.navigate(['/dashboard/profesor']);
       },
       error: (err) => {
         console.error('Error al actualizar:', err);
@@ -248,11 +301,13 @@ export class RegistroProfesoresComponent implements OnInit {
       }
     });
   }
+
   public soloLetras(event: KeyboardEvent) {
     if (!/^[a-zA-Z\u00C0-\u017F\s]*$/.test(event.key)) {
       event.preventDefault();
     }
   }
+
   public regresar() { 
     this.location.back(); 
   }

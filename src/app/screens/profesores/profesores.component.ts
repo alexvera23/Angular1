@@ -23,7 +23,7 @@ import { ProfesoresService } from '../../services/profesores.service';
     ...MATERIAL_MODULES
   ],
   templateUrl: './profesores.component.html',
-  styleUrl: './profesores.component.scss'
+  styleUrls: ['./profesores.component.scss']
 })
 export class ProfesoresComponent implements OnInit, AfterViewInit {
   private authService = inject(AuthService);
