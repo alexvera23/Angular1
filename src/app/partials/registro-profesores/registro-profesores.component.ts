@@ -1,7 +1,9 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { NgxMaskDirective } from 'ngx-mask';
+import { ActivatedRoute, Router } from '@angular/router';
+
 
 // Importación de los módulos de Material
 import { MATERIAL_MODULES } from '../../shared/shared-material';
@@ -33,6 +35,8 @@ export class RegistroProfesoresComponent implements OnInit {
   public editar: boolean = false;
   public hide: boolean = true;
   public hideConfirm: boolean = true;
+  private currentUserID: string | null = null;
+  public pageTitle: string = "Registro de Profesor";
   
   // Simulación de materias que vendrían de una base de datos
   public materiasData: any[] = [];
@@ -42,6 +46,9 @@ export class RegistroProfesoresComponent implements OnInit {
   private facadeService = inject(FacadeService);
   private authService = inject(AuthService); // Inyecta el servicio AuthService
   private materiasService = inject(MateriasService); // Inyecta el servicio MateriasService
+  private location = inject(Location);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   constructor() {
     const maestroSchema = this.profesoresService.esquemaProfesor();
@@ -62,8 +69,55 @@ export class RegistroProfesoresComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.maestroForm.patchValue({ rol: this.rol });
+    if (this.rol) {
+      this.maestroForm.patchValue({ rol: this.rol });
+      console.log('Rol establecido en el formulario:', this.rol);
+      this.cargarMaterias();
+    } else {
+      this.maestroForm.patchValue({ rol: 'maestro' });
+      console.log('Rol por defecto asignado: maestro');
+    }
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.editar = true;
+        this.pageTitle = "Edición de Profesor";
+        this.currentUserID = id;
+        this.loadProfesorData(id);
+      }else{
+        this.editar = false;
+        this.pageTitle = "Registro de Profesor";
+        console.log('Modo registro de profesor');
+      }
+    });
     this.cargarMaterias();
+  }
+
+  loadProfesorData(id: string): void {
+    this.profesoresService.getUsuarioById(id).subscribe({
+      next: (data) => {
+        console.log('Datos del profesor obtenidos:', data);
+        this.maestroForm.patchValue({
+          n_empleado: data.n_empleado,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          email: data.email,
+          fecha_nacimiento: data.fecha_nacimiento,
+          telefono: data.telefono,
+          cubiculo: data.cubiculo,
+          area_investigacion: data.area_investigacion,
+        });
+        // Cargar materias seleccionadas
+        const materiasFormArray: FormArray = this.maestroForm.get('materias') as FormArray;
+        data.materias.forEach((materiaId: string) => {
+          materiasFormArray.push(new FormControl(materiaId));
+        });
+      },
+      error: (err) => {
+        console.error('Error al cargar los datos del profesor:', err);
+        this.facadeService.openSnackBar('Error al cargar los datos del profesor', 'ERROR');
+      }
+    });
   }
   // Método para obtener las materias desde el servicio
   cargarMaterias(): void {
@@ -136,9 +190,70 @@ export class RegistroProfesoresComponent implements OnInit {
     });
 }
 
-  soloLetras(event: KeyboardEvent) {
+  public actualizar() {
+    if (this.maestroForm.invalid) {
+      this.maestroForm.markAllAsTouched();
+      this.facadeService.openSnackBar('Por favor, corrige los errores.', 'ERROR');
+      return;
+    }
+
+    if (!this.currentUserID) {
+      this.facadeService.openSnackBar('Error: No se pudo identificar el usuario', 'ERROR');
+      return;
+    }
+
+    // Habilita temporalmente el email para obtener su valor
+    const emailDisabled = this.maestroForm.get('email')?.disabled;
+    if (emailDisabled) {
+      this.maestroForm.get('email')?.enable();
+    }
+
+    // Obtener los datos del formulario
+    const userData = { ...this.maestroForm.getRawValue() };
+
+    // Si el email estaba deshabilitado, volver a deshabilitarlo
+    if (emailDisabled) {
+      this.maestroForm.get('email')?.disable();
+    }
+
+    // Asignar username desde email
+    userData.username = userData.email;
+
+    // Eliminar campos que no necesitamos enviar
+    delete userData.confirmar_password;
+    
+    // Si no hay contraseña nueva, eliminar el campo password
+    if (!userData.password) {
+      delete userData.password;
+    }
+
+    console.log('Datos de actualización:', userData);
+
+    // Enviar la actualización
+    this.profesoresService.updateUsuario(this.currentUserID, userData).subscribe({
+      next: (response) => {
+        console.log('Administrador actualizado:', response);
+        this.facadeService.openSnackBar('Administrador actualizado correctamente', 'ÉXITO');
+        // Redirigir a la lista de administradores
+        this.router.navigate(['/dashboard/admin']);
+      },
+      error: (err) => {
+        console.error('Error al actualizar:', err);
+        let errorMessage = 'Error al actualizar. ';
+        if (err.error) {
+          const errors = Object.values(err.error).flat().join(' ');
+          errorMessage += errors;
+        }
+        this.facadeService.openSnackBar(errorMessage, 'ERROR');
+      }
+    });
+  }
+  public soloLetras(event: KeyboardEvent) {
     if (!/^[a-zA-Z\u00C0-\u017F\s]*$/.test(event.key)) {
       event.preventDefault();
     }
+  }
+  public regresar() { 
+    this.location.back(); 
   }
 }

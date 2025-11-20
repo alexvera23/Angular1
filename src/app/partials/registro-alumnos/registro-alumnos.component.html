@@ -157,9 +157,17 @@
 
         <!-- Botones -->
         <div class="d-flex justify-content-end gap-2 mt-4">
+          <button mat-raised-button color="warn" type="button" (click)="regresar()">
+            <mat-icon>arrow_back</mat-icon>
+            Regresar
+          </button>
           <button mat-raised-button color="primary" type="submit">
             <mat-icon>save</mat-icon>
             Registrar Alumno
+          </button>
+          <button mat-raised-button color="primary" type="button" (click)="actualizar()" *ngIf="editar">
+            <mat-icon>update</mat-icon>
+            Actualizar
           </button>
         </div>
       </form>

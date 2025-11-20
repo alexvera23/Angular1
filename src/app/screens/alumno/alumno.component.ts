@@ -8,6 +8,11 @@ import { FacadeService } from '../../services/facade.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../partials/confirm-dialog/confirm-dialog.component';
+import { AlumnosService } from '../../services/alumnos.service';
+
+
 
 @Component({
   selector: 'app-alumno',
@@ -23,6 +28,12 @@ export class AlumnoComponent implements OnInit, AfterViewInit {
   private authService = inject(AuthService);
   private userDataService = inject(UserDataService);
   private facadeService = inject(FacadeService);
+  private alumnosService = inject(AlumnosService);
+  private dialog = inject(MatDialog);
+
+
+  
+
 
   public username: string | null = null;
   public userRole: string | null = null;
@@ -100,6 +111,31 @@ private loadAlumnos(): void {
   ngAfterViewInit(): void {
     this.listaAlumnos.paginator = this.paginator;
     this.listaAlumnos.sort = this.sort;
+  }
+
+    eliminarUsuario(id: string, username: string): void {
+    const dialogData: ConfirmDialogData = {
+      title: 'Confirmar eliminación',
+      mesage: `¿Estás seguro de que deseas eliminar al administrador <strong>${username}</strong>? Esta acción no se puede deshacer.`
+    };
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: dialogData
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.alumnosService.delateUsuario(id).subscribe({
+          next: () => {
+            this.facadeService.openSnackBar(`Alumno ${username} eliminado correctamente.`, 'OK');
+            this.loadAlumnos(); // Recargar la lista de alumnos
+          },
+          error: (err) => {
+            console.error('Error al eliminar alumno:', err);
+            this.facadeService.openSnackBar('Error al eliminar alumno.', 'OK');
+          }
+        });
+      }
+    });
   }
 
 }

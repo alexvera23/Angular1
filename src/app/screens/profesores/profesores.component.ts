@@ -8,6 +8,11 @@ import { UserDataService } from '../../services/user-data.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../partials/confirm-dialog/confirm-dialog.component';
+import { Location } from '@angular/common';
+import { ProfesoresService } from '../../services/profesores.service';
+
 
 @Component({
   selector: 'app-profesores',
@@ -24,6 +29,10 @@ export class ProfesoresComponent implements OnInit, AfterViewInit {
   private authService = inject(AuthService);
   private facadeService = inject(FacadeService);
   private userDataService = inject(UserDataService);
+  private dialog = inject(MatDialog);
+  private location = inject(Location);
+  private profesoresService = inject(ProfesoresService);
+  
 
   // Propiedades del usuario
   public username: string | null = null;
@@ -145,4 +154,30 @@ export class ProfesoresComponent implements OnInit, AfterViewInit {
     this.authService.logout();
     this.facadeService.openSnackBar('Sesión cerrada correctamente', 'OK');
   }
+
+  eliminarUsuario(id: string, username: string): void {
+    const dialogData: ConfirmDialogData = {
+      title: 'Confirmar eliminación',
+      mesage: `¿Estás seguro de que deseas eliminar al administrador <strong>${username}</strong>? Esta acción no se puede deshacer.`
+    };
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: dialogData
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.profesoresService.delateUsuario(id).subscribe({
+          next: () => {
+            this.facadeService.openSnackBar(`Profesor ${username} eliminado correctamente.`, 'OK');
+            this.loadMaestros(); // Recargar la lista de profesores
+          },
+          error: (err) => {
+            console.error('Error al eliminar profesor:', err);
+            this.facadeService.openSnackBar('Error al eliminar profesor.', 'OK');
+          }
+        });
+      }
+    });
+  }
+
 }
