@@ -63,12 +63,12 @@ export class RegistroAlumnosComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // IMPORTANTE: Asignar el rol correctamente desde el @Input
+    
     if (this.rol) {
       this.alumnoForm.patchValue({ rol: this.rol });
       console.log('Rol asignado desde @Input:', this.rol);
     } else {
-      // Si no hay rol desde @Input, usar 'alumno' por defecto
+      
       this.alumnoForm.patchValue({ rol: 'alumno' });
       console.log('Rol por defecto asignado: alumno');
     }
@@ -76,21 +76,21 @@ export class RegistroAlumnosComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
-        // --- MODO EDICIÓN ---
+       
         this.editar = true;
         this.currentUserID = id;
         this.pageTitle = 'Editar Alumno';
         
-        // Quitar validadores de contraseña en modo edición
+        // Editar usuario , no es necesario cambiar la contraseña 
         this.alumnoForm.get('password')?.clearValidators();
         this.alumnoForm.get('password')?.updateValueAndValidity();
         this.alumnoForm.get('confirmar_password')?.clearValidators();
         this.alumnoForm.get('confirmar_password')?.updateValueAndValidity();
         
-        // Cargar datos del alumno a editar
+        
         this.loadUserData(id);
       } else {
-        // --- MODO CREACIÓN ---
+       // Nuevo registro :)
         this.editar = false;
         this.pageTitle = 'Registro de Alumno';
       }
@@ -115,17 +115,17 @@ export class RegistroAlumnosComponent implements OnInit {
           first_name: data.first_name,
           last_name: data.last_name,
           email: data.email,
-          fecha_nacimiento: fechaNacimiento, // Asignar el objeto Date
+          fecha_nacimiento: fechaNacimiento, 
           curp: data.curp,
           rfc: data.rfc,
-          edad: data.edad, // ¡CORRECCIÓN: Ahora sí se carga la edad!
+          edad: data.edad, //  Corregir la edad, por alguna razón no se está seteando :(
           telefono: data.telefono,
           ocupacion: data.ocupacion,
           rol: data.rol
         });
         
         this.alumnoForm.get('email')?.disable(); // Deshabilita el campo email en modo edición
-        this.alumnoForm.get('edad')?.disable(); 
+        this.alumnoForm.get('edad')?.disable(); // Deshabilita el campo edad en modo edición temporalmente
         
         console.log('Formulario después de patchValue:', this.alumnoForm.value);
       },
@@ -212,7 +212,7 @@ export class RegistroAlumnosComponent implements OnInit {
       delete userData.password;
     }
 
-    // ¡CORRECCIÓN: Formatear la fecha correctamente!
+    // Formatear la fecha de nacimiento
     if (userData.fecha_nacimiento) {
       const fecha = new Date(userData.fecha_nacimiento);
       if (!isNaN(fecha.getTime())) {

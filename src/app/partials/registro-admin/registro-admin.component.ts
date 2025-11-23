@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 // Importación de los módulos de Material
 import { MATERIAL_MODULES } from '../../shared/shared-material';
 
-// Importaciones de nuestros servicios
+
 import { AdministradoresService } from '../../services/administradores.service';
 import { FacadeService } from '../../services/facade.service';
 import { AuthService } from '../../services/auth.service';
@@ -31,7 +31,7 @@ export class RegistroAdminComponent implements OnInit {
   private currentUserID: string | null = null;
   public pageTitle: string = "Registro de Administrador";
   
-  // Inyección de dependencias
+
   private fb = inject(FormBuilder);
   private location = inject(Location);
   private administradoresService = inject(AdministradoresService);
@@ -59,8 +59,6 @@ export class RegistroAdminComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // IMPORTANTE: Asignar el rol al formulario desde el @Input
-    // Esto se hace en ngOnInit porque el @Input puede no estar disponible en el constructor
     if (this.rol) {
       this.adminForm.patchValue({ rol: this.rol });
       console.log('Rol asignado desde @Input:', this.rol);
@@ -73,7 +71,7 @@ export class RegistroAdminComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
-        // --- MODO EDICIÓN ---
+        //Editar usuarios:)
         this.editar = true;
         this.currentUserID = id;
         this.pageTitle = 'Editar Administrador';
@@ -87,7 +85,7 @@ export class RegistroAdminComponent implements OnInit {
         // Carga los datos del usuario
         this.loadUserData(id);
       } else {
-        // --- MODO CREACIÓN ---
+        // Crear nuevo usuario :)
         this.editar = false;
         this.pageTitle = 'Registro de Administrador';
       }
@@ -128,10 +126,10 @@ export class RegistroAdminComponent implements OnInit {
       return;
     }
 
-    // Crear una copia de los datos del formulario
+    
     const userData = { ...this.adminForm.value };
 
-    // Asignar el username desde el email
+    
     userData.username = this.adminForm.get('email')?.value;
 
     // Eliminar el campo que el backend no necesita
@@ -145,7 +143,7 @@ export class RegistroAdminComponent implements OnInit {
         console.log("Usuario registrado con éxito:", response);
         this.facadeService.openSnackBar('Registro exitoso');
         this.adminForm.reset();
-        // Opcional: redirigir a la lista de administradores
+        // Opcional: redirigir a la lista de administradores, preguntar al profe :)
         // this.router.navigate(['/dashboard/admin']);
       },
       error: (err) => {
@@ -184,21 +182,21 @@ export class RegistroAdminComponent implements OnInit {
       this.adminForm.get('email')?.enable();
     }
 
-    // Obtener los datos del formulario
+    
     const userData = { ...this.adminForm.getRawValue() };
 
-    // Si el email estaba deshabilitado, volver a deshabilitarlo
+    
     if (emailDisabled) {
       this.adminForm.get('email')?.disable();
     }
 
-    // Asignar username desde email
+   
     userData.username = userData.email;
 
-    // Eliminar campos que no necesitamos enviar
+   
     delete userData.confirmar_password;
     
-    // Si no hay contraseña nueva, eliminar el campo password
+    
     if (!userData.password) {
       delete userData.password;
     }

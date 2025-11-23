@@ -83,7 +83,7 @@ export class RegistroProfesoresComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
-        // --- MODO EDICIÓN ---
+        // editar al profesor :)
         this.editar = true;
         this.pageTitle = "Edición de Profesor";
         this.currentUserID = id;
@@ -97,7 +97,7 @@ export class RegistroProfesoresComponent implements OnInit {
         // Cargar datos del profesor
         this.loadProfesorData(id);
       } else {
-        // --- MODO CREACIÓN ---
+        // Crear un nuevo profesor :)
         this.editar = false;
         this.pageTitle = "Registro de Profesor";
         console.log('Modo registro de profesor');
@@ -130,7 +130,7 @@ export class RegistroProfesoresComponent implements OnInit {
           area_investigacion: data.area_investigacion,
         });
         
-        // ¡CORRECCIÓN: Cargar las materias en el FormArray!
+        // Cargar las materias en el FormArray
         const materiasFormArray: FormArray = this.maestroForm.get('materias') as FormArray;
         materiasFormArray.clear(); // Limpiar primero
         
@@ -140,7 +140,7 @@ export class RegistroProfesoresComponent implements OnInit {
           });
         }
         
-        // Deshabilitar el email
+        
         this.maestroForm.get('email')?.disable();
         
         console.log('FormArray de materias después de cargar:', materiasFormArray.value);
@@ -166,7 +166,7 @@ export class RegistroProfesoresComponent implements OnInit {
     });
   }
 
-  // ¡CORRECCIÓN: Verificar si un checkbox está seleccionado!
+  
   isMateriSelected(materiaId: string): boolean {
     const materiasFormArray: FormArray = this.maestroForm.get('materias') as FormArray;
     return materiasFormArray.controls.some(control => control.value === materiaId.toString());
@@ -245,27 +245,27 @@ export class RegistroProfesoresComponent implements OnInit {
       return;
     }
 
-    // Habilita temporalmente el email para obtener su valor
+   
     const emailDisabled = this.maestroForm.get('email')?.disabled;
     if (emailDisabled) {
       this.maestroForm.get('email')?.enable();
     }
 
-    // Obtener los datos del formulario
+    
     const userData = { ...this.maestroForm.getRawValue() };
 
-    // Si el email estaba deshabilitado, volver a deshabilitarlo
+   
     if (emailDisabled) {
       this.maestroForm.get('email')?.disable();
     }
 
-    // Asignar username desde email
+   
     userData.username = userData.email;
 
-    // Eliminar campos que no necesitamos enviar
+    
     delete userData.confirmar_password;
     
-    // Si no hay contraseña nueva, eliminar el campo password
+   
     if (!userData.password) {
       delete userData.password;
     }

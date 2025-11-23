@@ -52,6 +52,10 @@ export class AlumnoComponent implements OnInit, AfterViewInit {
     this.username = this.authService.getUsername();
     this.userRole = this.authService.getUserRole();
     
+    if (this.userRole === 'alumno') {
+      this.displayedAlumnosColumns = this.displayedAlumnosColumns.filter(c => c !== 'acciones');
+    }
+    
     // Cargamos los datos para las tablas
     this.loadAlumnos(); 
     this.listaAlumnos.filterPredicate = this.createFilter(); 

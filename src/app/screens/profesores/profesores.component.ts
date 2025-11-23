@@ -34,14 +34,14 @@ export class ProfesoresComponent implements OnInit, AfterViewInit {
   private profesoresService = inject(ProfesoresService);
   
 
-  // Propiedades del usuario
+ 
   public username: string | null = null;
   public userRole: string | null = null;
 
-  // DataSource para la tabla
+  
   public listaMaestros = new MatTableDataSource<any>();
 
-  // Columnas a mostrar en la tabla
+  
   public displayedMaestrosColumns: string[] = [
     'n_empleado',
     'first_name', 
@@ -55,19 +55,23 @@ export class ProfesoresComponent implements OnInit, AfterViewInit {
     'acciones'
   ];
   
-  // ViewChild para paginator y sort
+  
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   ngOnInit(): void {
-    // Obtener datos del usuario
+    
     this.username = this.authService.getUsername();
     this.userRole = this.authService.getUserRole();
+
+    if (this.userRole !== 'administrador') {
+      this.displayedMaestrosColumns = this.displayedMaestrosColumns.filter(c => c !== 'acciones');
+    }
     
     // Cargar datos de maestros
     this.loadMaestros();
     
-    // Configurar filtro personalizado para búsqueda en materias
+    
     this.listaMaestros.filterPredicate = this.createFilter();
   }
 
@@ -77,9 +81,7 @@ export class ProfesoresComponent implements OnInit, AfterViewInit {
     this.listaMaestros.sort = this.sort;
   }
 
-  /**
-   * Carga la lista de maestros desde el servicio
-   */
+  
   private loadMaestros(): void {
     this.userDataService.getMaestros().subscribe({
       next: (data) => {
@@ -93,9 +95,7 @@ export class ProfesoresComponent implements OnInit, AfterViewInit {
     });
   }
 
-  /**
-   * Aplica el filtro a la tabla
-   */
+ 
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.listaMaestros.filter = filterValue.trim().toLowerCase();
@@ -106,9 +106,7 @@ export class ProfesoresComponent implements OnInit, AfterViewInit {
     }
   }
 
-  /**
-   * Limpia el filtro de búsqueda
-   */
+  
   clearFilter(input: HTMLInputElement): void {
     input.value = '';
     this.listaMaestros.filter = '';
@@ -118,9 +116,7 @@ export class ProfesoresComponent implements OnInit, AfterViewInit {
     }
   }
 
-  /**
-   * Crea un filtro personalizado que busca en todas las columnas incluyendo materias
-   */
+ 
   private createFilter(): (data: any, filter: string) => boolean {
     return (data: any, filter: string): boolean => {
       const searchStr = filter.toLowerCase();
@@ -147,9 +143,7 @@ export class ProfesoresComponent implements OnInit, AfterViewInit {
     };
   }
 
-  /**
-   * Cierra la sesión del usuario
-   */
+  
   public logout(): void {
     this.authService.logout();
     this.facadeService.openSnackBar('Sesión cerrada correctamente', 'OK');
