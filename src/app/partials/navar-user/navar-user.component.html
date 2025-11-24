@@ -8,13 +8,31 @@
 
     <ul class="scoop-navbar-list">
      
-      <li *ngIf="canSeeRegisterItem()" 
-          routerLink="/registro-usuario" 
-          routerLinkActive="active" 
-          class="scoop-navbar-item">
-        <span class="material-icons">person_add</span>
-        <span>Registro</span>
-      </li>
+    <li *ngIf="canSeeRegisterItem()" 
+        [matMenuTriggerFor]="menuRegistro" 
+        class="scoop-navbar-item" 
+        style="cursor: pointer;">
+      
+      <span class="material-icons">app_registration</span>
+      
+      <span>Registro</span>
+      
+      <span class="material-icons" style="margin-left: auto; font-size: 1.2rem;">arrow_drop_down</span>
+    </li>
+
+    <mat-menu #menuRegistro="matMenu" xPosition="after">
+      
+      <button mat-menu-item routerLink="/registro-usuario">
+        <mat-icon>person_add</mat-icon>
+        <span>Registrar Usuarios</span>
+      </button>
+
+      <button mat-menu-item routerLink="/dashboard/registrar-evento">
+        <mat-icon>event</mat-icon>
+        <span>Registrar Evento</span>
+      </button>
+
+    </mat-menu>
 
      
       <li *ngIf="canSeeAdminItems()" 

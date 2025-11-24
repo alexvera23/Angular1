@@ -4,6 +4,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { FacadeService } from '../../services/facade.service';
+import { MATERIAL_MODULES } from '../../shared/shared-material';
 
 @Component({
   selector: 'app-navbar-user',
@@ -11,7 +12,8 @@ import { FacadeService } from '../../services/facade.service';
   imports: [
     CommonModule,
     RouterLink,
-    RouterLinkActive
+    RouterLinkActive,
+    ...MATERIAL_MODULES
   ],
   templateUrl: './navar-user.component.html',
   styleUrls: ['./navar-user.component.scss']

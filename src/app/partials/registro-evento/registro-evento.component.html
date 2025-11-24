@@ -1,0 +1,123 @@
+<div class="wrapper">
+  <div class="section-register">
+    <div class="header-register">
+      <h1 class="title">Registro de Evento Académico</h1>
+      <p class="subtitle">Complete el formulario para dar de alta un nuevo evento</p>
+    </div>
+
+    <form [formGroup]="formEvento" (ngSubmit)="registrar()">
+      
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Nombre del Evento</mat-label>
+        <input matInput formControlName="nombre" placeholder="Ej. Conferencia de IA">
+        <mat-error *ngIf="formEvento.get('nombre')?.hasError('required')">El nombre es obligatorio</mat-error>
+        <mat-error *ngIf="formEvento.get('nombre')?.hasError('pattern')">Solo se permiten letras, números y espacios</mat-error>
+      </mat-form-field>
+
+      <div class="row">
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Tipo de Evento</mat-label>
+            <mat-select formControlName="tipo">
+              <mat-option *ngFor="let tipo of tiposEvento" [value]="tipo">
+                {{tipo}}
+              </mat-option>
+            </mat-select>
+            <mat-error>El tipo es obligatorio</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Fecha de Realización</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="fecha" readonly>
+            <mat-hint>DD/MM/AAAA</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error>La fecha es obligatoria</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row mt-2">
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Hora Inicio</mat-label>
+            <input matInput type="time" formControlName="horaInicio">
+            <mat-error>Requerido</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Hora Fin</mat-label>
+            <input matInput type="time" formControlName="horaFin">
+            <mat-error>Requerido</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <mat-form-field appearance="outline" class="w-100 mt-2">
+        <mat-label>Lugar del Evento</mat-label>
+        <input matInput formControlName="lugar" placeholder="Ej. Auditorio 1">
+        <mat-error *ngIf="formEvento.get('lugar')?.hasError('pattern')">Solo caracteres alfanuméricos</mat-error>
+      </mat-form-field>
+
+      <div class="my-3" formGroupName="publico">
+        <label class="d-block mb-2 fw-bold text-secondary">Público Objetivo *</label>
+        <div class="d-flex gap-3 flex-wrap">
+          <mat-checkbox formControlName="estudiantes">Estudiantes</mat-checkbox>
+          <mat-checkbox formControlName="profesores">Profesores</mat-checkbox>
+          <mat-checkbox formControlName="publico_general">Público en General</mat-checkbox>
+        </div>
+        <mat-error *ngIf="formEvento.get('publico')?.touched && formEvento.get('publico')?.hasError('requireOneCheckbox')" 
+                   style="font-size: 0.75rem;">
+          Debe seleccionar al menos una opción
+        </mat-error>
+      </div>
+
+      <div *ngIf="showProgramaEducativo">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Programa Educativo</mat-label>
+          <mat-select formControlName="programa">
+            <mat-option *ngFor="let prog of programasEducativos" [value]="prog">
+              {{prog}}
+            </mat-option>
+          </mat-select>
+          <mat-error>Requerido para estudiantes</mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Responsable del Evento</mat-label>
+        <mat-select formControlName="responsable">
+          <mat-option *ngFor="let user of listaResponsables" [value]="user.id">
+            {{user.first_name}} {{user.last_name}} ({{user.rol_label}})
+          </mat-option>
+        </mat-select>
+        <mat-error>Debe seleccionar un responsable</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Descripción Breve</mat-label>
+        <textarea matInput formControlName="descripcion" rows="3"></textarea>
+        <mat-error>La descripción es obligatoria</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Cupo Máximo</mat-label>
+        <input matInput type="number" formControlName="cupo" placeholder="Ej. 100">
+        <mat-error *ngIf="formEvento.get('cupo')?.hasError('max')">Máximo 3 dígitos (999)</mat-error>
+        <mat-error *ngIf="formEvento.get('cupo')?.hasError('min')">Debe ser mayor a 0</mat-error>
+      </mat-form-field>
+
+      <div class="d-flex justify-content-end mt-4">
+        <button mat-raised-button color="warn" type="button" (click)="regresar()">
+            <mat-icon>arrow_back</mat-icon>
+            Cancelar
+          </button>
+        <button mat-raised-button color="primary" type="submit">Registrar Evento</button>
+      </div>
+
+    </form>
+  </div>
+</div>

@@ -72,6 +72,12 @@ export const routes: Routes = [
         path : 'graficas',
         loadComponent: () => import('./screens/graficas-screen/graficas-screen.component').then(c => c.GraficasScreenComponent),
         canActivate: [authGuard] // Proteger esta ruta con el AuthGuard
+      },
+      {
+        path: 'registrar-evento',
+        loadComponent: () => import('./partials/registro-evento/registro-evento.component').then(c => c.RegistroEventoComponent),
+        canActivate: [authGuard]
+        
       }
 
 
