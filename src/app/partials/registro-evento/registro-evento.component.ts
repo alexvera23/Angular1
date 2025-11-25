@@ -5,6 +5,8 @@ import { MATERIAL_MODULES } from '../../shared/shared-material';
 import { UserDataService } from '../../services/user-data.service';
 import { FacadeService } from '../../services/facade.service';
 import { forkJoin } from 'rxjs'; // Para unir peticiones
+import { EventosService } from '../../services/eventos.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-registro-evento',
@@ -18,6 +20,8 @@ export class RegistroEventoComponent implements OnInit {
   private userDataService = inject(UserDataService);
   private facadeService = inject(FacadeService);
  private location = inject(Location);
+ private eventosService = inject(EventosService);
+ private router = inject(Router);
 
   public formEvento: FormGroup;
   public listaResponsables: any[] = [];
@@ -124,21 +128,57 @@ export class RegistroEventoComponent implements OnInit {
       return;
     }
 
-    // Validar Horario (Inicio < Fin)
+    // Validar Horario
     const inicio = this.formEvento.get('horaInicio')?.value;
     const fin = this.formEvento.get('horaFin')?.value;
-
     if (inicio >= fin) {
       this.facadeService.openSnackBar('La hora de inicio debe ser menor a la hora de fin', 'Cerrar');
       return;
     }
 
-    // Aquí iría la lógica de envío al backend
-    console.log("Datos del Evento:", this.formEvento.value);
-    this.facadeService.openSnackBar('Evento registrado correctamente (Simulación)', 'OK');
+    // --- PREPARAR DATOS PARA ENVÍO ---
+    // 1. Obtenemos los valores del formulario
+    const formValues = this.formEvento.value;
+
+    // 2. Creamos un nuevo objeto con los nombres EXACTOS que Django espera
+    const datosParaEnviar: any = {
+      ...formValues, // Copiamos nombre, tipo, lugar, descripcion, cupo, responsable, publico...
+      
+      // Traducimos los campos que no coinciden
+      hora_inicio: formValues.horaInicio,
+      hora_fin: formValues.horaFin,
+      programa_educativo: formValues.programa,
+
+      // Conversión de Fecha (si existe)
+      fecha: formValues.fecha ? new Date(formValues.fecha).toISOString().split('T')[0] : null
+    };
+
+    // Eliminamos los campos viejos que Django no entiende (opcional, pero limpio)
+    delete datosParaEnviar.horaInicio;
+    delete datosParaEnviar.horaFin;
+    delete datosParaEnviar.programa;
+
+    // --- LLAMADA AL SERVICIO ---
+    // ¡IMPORTANTE! Envía 'datosParaEnviar', NO 'this.formEvento.value'
+    this.eventosService.registrarEvento(datosParaEnviar).subscribe({
+      next: (response) => {
+        console.log('Evento registrado:', response);
+        this.facadeService.openSnackBar('Evento registrado exitosamente', 'OK');
+        this.formEvento.reset();
+        this.router.navigate(['/dashboard/registrar-evento']);
+      },
+      error: (error) => {
+        console.error('Error al registrar:', error);
+        let mensaje = 'Ocurrió un error al registrar el evento';
+        if (error.error) {
+           mensaje += ': ' + JSON.stringify(error.error);
+        }
+        this.facadeService.openSnackBar(mensaje, 'Cerrar');
+      }
+    });
   }
 
-    public regresar() {
+ public regresar() {
     this.location.back();
   }
 }

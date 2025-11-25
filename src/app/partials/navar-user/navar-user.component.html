@@ -71,6 +71,8 @@
       </li>
 
      
+
+     
       <li *ngIf="canSeeTeacherItems()" 
           routerLink="/dashboard/eventos" 
           routerLinkActive="active" 
@@ -79,6 +81,8 @@
         <span>Eventos Académicos</span>
       </li>
     </ul>
+
+    
 
   
     <button class="scoop-logout-btn" (click)="logout()">
@@ -132,6 +136,8 @@
         <img src="assets/images/fcc_logo.png" alt="Logo BUAP" class="sidebar-logo" />
         <h3 class="sidebar-title">Sistema Escolar</h3>
       </div>
+
+      
 
       <ul class="scoop-navbar-list">
         <li *ngIf="canSeeRegisterItem()" 

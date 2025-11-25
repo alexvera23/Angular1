@@ -78,6 +78,11 @@ export const routes: Routes = [
         loadComponent: () => import('./partials/registro-evento/registro-evento.component').then(c => c.RegistroEventoComponent),
         canActivate: [authGuard]
         
+      },
+      {
+        path: 'eventos',
+        loadComponent: () => import('./screens/eventos-academicos-screens/eventos-academicos-screens.component').then(c => c.EventosAcademicosScreensComponent),
+        canActivate: [authGuard]
       }
 
 
