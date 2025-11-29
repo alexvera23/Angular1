@@ -102,10 +102,10 @@ export class RegistroAlumnosComponent implements OnInit {
       next: (data) => {
         console.log('Datos del alumno recibidos:', data);
         
-        // Convertir la fecha string a objeto Date para el datepicker
+       
         let fechaNacimiento = null;
         if (data.fecha_nacimiento) {
-          // Si viene en formato 'YYYY-MM-DD', lo convertimos a Date
+         
           fechaNacimiento = new Date(data.fecha_nacimiento + 'T00:00:00');
         }
         
@@ -192,7 +192,7 @@ export class RegistroAlumnosComponent implements OnInit {
       return;
     }
 
-    // Habilitar email temporalmente
+    
     const emailDisabled = this.alumnoForm.get('email')?.disabled;
     if (emailDisabled) {
       this.alumnoForm.get('email')?.enable();
@@ -200,7 +200,7 @@ export class RegistroAlumnosComponent implements OnInit {
 
     const userData = { ...this.alumnoForm.getRawValue() };
 
-    // Deshabilitar email nuevamente
+    
     if (emailDisabled) {
       this.alumnoForm.get('email')?.disable();
     }

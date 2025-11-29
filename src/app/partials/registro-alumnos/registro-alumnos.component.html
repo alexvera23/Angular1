@@ -5,7 +5,7 @@
         <h3 class="title-user mb-4">Ingresa los datos del Alumno</h3>
         <mat-divider class="mb-4"></mat-divider>
 
-        <!-- ID/Matrícula -->
+       
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label>ID/Matrícula</mat-label>
           <input matInput type="text" formControlName="matricula" placeholder="Escribe la matrícula">
@@ -15,7 +15,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Nombre -->
+       
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label>Nombre(s)</mat-label>
           <input matInput type="text" formControlName="first_name" placeholder="Escribe el nombre">
@@ -25,7 +25,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Apellidos -->
+       
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label>Apellidos</mat-label>
           <input matInput type="text" formControlName="last_name" placeholder="Escribe los apellidos">
@@ -35,7 +35,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Correo Electrónico -->
+        
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label>Correo Electrónico</mat-label>
           <input matInput type="email" formControlName="email" placeholder="nombre@correo.com">
@@ -48,7 +48,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Contraseña (solo si no se edita) -->
+        
         <mat-form-field appearance="outline" class="w-100 mb-2" *ngIf="!editar">
           <mat-label>Contraseña</mat-label>
           <input matInput [type]="hide ? 'password' : 'text'" 
@@ -66,7 +66,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Confirmar Contraseña (solo si no se edita) -->
+        
         <mat-form-field appearance="outline" class="w-100 mb-2" *ngIf="!editar">
           <mat-label>Confirmar Contraseña</mat-label>
           <input matInput [type]="hideConfirm ? 'password' : 'text'" 
@@ -81,7 +81,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Fecha de Nacimiento -->
+        
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label>Fecha de Nacimiento</mat-label>
           <input matInput [matDatepicker]="picker" formControlName="fecha_nacimiento">
@@ -93,7 +93,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- CURP -->
+       
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label>CURP</mat-label>
           <input matInput type="text" formControlName="curp" 
@@ -110,7 +110,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- RFC -->
+       
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label>RFC</mat-label>
           <input matInput type="text" formControlName="rfc" 
@@ -126,7 +126,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Edad -->
+       
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label>Edad</mat-label>
           <input matInput type="number" formControlName="edad" placeholder="Escribe la edad">
@@ -136,7 +136,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Teléfono -->
+        
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label>Teléfono</mat-label>
           <input matInput type="tel" formControlName="telefono" 
@@ -148,7 +148,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Ocupación (Opcional) -->
+        
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label>Ocupación (Opcional)</mat-label>
           <input matInput type="text" formControlName="ocupacion" placeholder="Escribe la ocupación">

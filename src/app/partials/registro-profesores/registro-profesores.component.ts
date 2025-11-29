@@ -110,13 +110,13 @@ export class RegistroProfesoresComponent implements OnInit {
       next: (data) => {
         console.log('Datos del profesor obtenidos:', data);
         
-        // Convertir la fecha string a objeto Date para el datepicker
+        
         let fechaNacimiento = null;
         if (data.fecha_nacimiento) {
           fechaNacimiento = new Date(data.fecha_nacimiento + 'T00:00:00');
         }
         
-        // Guardar las materias seleccionadas
+        
         this.materiasSeleccionadas = data.materias || [];
         
         this.maestroForm.patchValue({

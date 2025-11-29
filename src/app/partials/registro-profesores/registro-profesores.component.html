@@ -5,7 +5,7 @@
         <h3 class="title-user mb-4">Ingresa los datos del Profesor</h3>
         <mat-divider class="mb-4"></mat-divider>
 
-        <!-- ID de Trabajador -->
+        
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label>ID de Trabajador</mat-label>
           <input matInput type="text" formControlName="n_empleado" placeholder="Escribe el No. de Empleado">
@@ -15,7 +15,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Nombre -->
+        
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label>Nombre(s)</mat-label>
           <input matInput type="text" formControlName="first_name" 
@@ -27,7 +27,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Apellidos -->
+        
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label>Apellidos</mat-label>
           <input matInput type="text" formControlName="last_name" 
@@ -39,7 +39,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Correo Electrónico -->
+        
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label>Correo Electrónico</mat-label>
           <input matInput type="email" formControlName="email" placeholder="nombre@correo.com">
@@ -52,7 +52,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Contraseña (solo si no se edita) -->
+        
         <mat-form-field appearance="outline" class="w-100 mb-2" *ngIf="!editar">
           <mat-label>Contraseña</mat-label>
           <input matInput [type]="hide ? 'password' : 'text'" 
@@ -70,7 +70,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Confirmar Contraseña (solo si no se edita) -->
+        
         <mat-form-field appearance="outline" class="w-100 mb-2" *ngIf="!editar">
           <mat-label>Confirmar Contraseña</mat-label>
           <input matInput [type]="hideConfirm ? 'password' : 'text'" 
@@ -85,7 +85,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Fecha de Nacimiento -->
+        
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label>Fecha de Nacimiento</mat-label>
           <input matInput [matDatepicker]="picker" formControlName="fecha_nacimiento">
@@ -97,7 +97,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Teléfono -->
+        
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label>Teléfono</mat-label>
           <input matInput type="tel" formControlName="telefono" 
@@ -109,7 +109,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Cubículo -->
+       
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label>Cubículo</mat-label>
           <input matInput type="text" formControlName="cubiculo" placeholder="Escribe el cubículo">
@@ -119,7 +119,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Área de Investigación -->
+        
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label>Área de Investigación</mat-label>
           <input matInput type="text" formControlName="area_investigacion" 
@@ -130,7 +130,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Materias a Impartir -->
+       
         <div class="materias-section mb-3">
           <label class="materias-label">
             <mat-icon class="label-icon">school</mat-icon>

@@ -132,12 +132,12 @@ export class RegistroAdminComponent implements OnInit {
     
     userData.username = this.adminForm.get('email')?.value;
 
-    // Eliminar el campo que el backend no necesita
+    
     delete userData.confirmar_password;
 
     console.log('Datos que se enviarán al backend:', userData);
 
-    // Enviar la petición
+    
     this.authService.register(userData).subscribe({
       next: (response) => {
         console.log("Usuario registrado con éxito:", response);
@@ -176,7 +176,7 @@ export class RegistroAdminComponent implements OnInit {
       return;
     }
 
-    // Habilita temporalmente el email para obtener su valor
+    
     const emailDisabled = this.adminForm.get('email')?.disabled;
     if (emailDisabled) {
       this.adminForm.get('email')?.enable();
@@ -208,7 +208,7 @@ export class RegistroAdminComponent implements OnInit {
       next: (response) => {
         console.log('Administrador actualizado:', response);
         this.facadeService.openSnackBar('Administrador actualizado correctamente', 'ÉXITO');
-        // Redirigir a la lista de administradores
+       
         this.router.navigate(['/dashboard/admin']);
       },
       error: (err) => {
