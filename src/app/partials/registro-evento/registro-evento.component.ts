@@ -107,9 +107,9 @@ export class RegistroEventoComponent implements OnInit {
           horaInicio: data.hora_inicio.substring(0,5),
           horaFin: data.hora_fin.substring(0,5),
           publico: {
-            estudiantes: data.publico.estudiantes,
-            profesores: data.publico.profesores,
-            publico_general: data.publico.publico_general
+            estudiantes: data.publico_estudiantes,
+          profesores: data.publico_profesores,
+          publico_general: data.publico_general
           }
         });
       },

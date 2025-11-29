@@ -8,6 +8,8 @@ import { FacadeService } from '../../services/facade.service';
 import { MATERIAL_MODULES } from '../../shared/shared-material';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { ConfirmDialogComponent } from '../../partials/confirm-dialog/confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 
 @Component({
@@ -24,6 +26,7 @@ export class EventosAcademicosScreensComponent implements OnInit, AfterViewInit 
   private authService = inject(AuthService);
   private router = inject(Router);
   private location = inject(Location);
+  private dialog = inject(MatDialog)
  
 
 
@@ -95,11 +98,36 @@ export class EventosAcademicosScreensComponent implements OnInit, AfterViewInit 
 
   public eliminarEvento(id: number) {
     console.log("Eliminar evento ID:", id);
-    // Aquí abrirás el diálogo de confirmación
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Eliminar Evento',
+        message: '¿Estás seguro de que deseas eliminar este evento permanentemente?',
+        confirmText: 'Eliminar', // Texto del botón
+        confirmColor: 'warn'    // Color rojo
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // Si result es true (el usuario dio clic en Eliminar)
+      if (result) {
+        this.eventosService.eliminarEvento(id).subscribe({
+          next: () => {
+            this.facadeService.openSnackBar('Evento eliminado correctamente', 'OK');
+            // 3. Recargar la lista para que desaparezca de la tabla
+            this.obtenerEventos(); 
+          },
+          error: (err) => {
+            console.error(err);
+            this.facadeService.openSnackBar('Error al eliminar el evento', 'Cerrar');
+          }
+        });
+      }
+    });
+
+    
   }
   public editarEvento(id: number) {
     console.log("Editar evento ID:", id);
-    // Aquí navegarás al formulario de edición
     this.router.navigate([`/dashboard/editar-evento/${id}`]);
   }
 
