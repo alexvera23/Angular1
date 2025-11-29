@@ -1,7 +1,7 @@
 <div class="wrapper">
   <div class="section-register">
     <div class="header-register">
-      <h1 class="title">Registro de Evento Académico</h1>
+      <h1 class="title">{{pageTitle}}</h1>
       <p class="subtitle">Complete el formulario para dar de alta un nuevo evento</p>
     </div>
 
@@ -111,11 +111,14 @@
       </mat-form-field>
 
       <div class="d-flex justify-content-end mt-4">
-        <button mat-raised-button color="warn" type="button" (click)="regresar()">
+      <button mat-raised-button color="warn" type="button" (click)="regresar()">
             <mat-icon>arrow_back</mat-icon>
             Cancelar
           </button>
-        <button mat-raised-button color="primary" type="submit">Registrar Evento</button>
+      <!-- Texto del botón dinámico -->
+      <button mat-raised-button color="primary" type="submit">
+        {{ editar ? 'Actualizar' : 'Registrar' }}
+      </button>
       </div>
 
     </form>

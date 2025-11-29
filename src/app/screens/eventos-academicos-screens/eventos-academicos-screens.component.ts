@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location} from '@angular/common';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -7,6 +7,8 @@ import { EventosService } from '../../services/eventos.service';
 import { FacadeService } from '../../services/facade.service';
 import { MATERIAL_MODULES } from '../../shared/shared-material';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-eventos-academicos-screens',
@@ -20,6 +22,10 @@ export class EventosAcademicosScreensComponent implements OnInit, AfterViewInit 
   private eventosService = inject(EventosService);
   private facadeService = inject(FacadeService);
   private authService = inject(AuthService);
+  private router = inject(Router);
+  private location = inject(Location);
+ 
+
 
   public userRole: string | null = null;
   public username: string | null = null;
@@ -46,6 +52,10 @@ export class EventosAcademicosScreensComponent implements OnInit, AfterViewInit 
   ngOnInit(): void {
     this.userRole = this.authService.getUserRole();
     this.username = this.authService.getUsername();
+
+    if (this.userRole !== 'administrador') {
+      this.displayedColumns= this.displayedColumns.filter(c => c !== 'acciones');
+    }
 
     // Cargar eventos
     this.obtenerEventos();
@@ -80,17 +90,23 @@ export class EventosAcademicosScreensComponent implements OnInit, AfterViewInit 
     }
   }
 
-  // --- Botones (Funcionalidad pendiente) ---
-  
-  public editarEvento(id: number) {
-    console.log("Editar evento ID:", id);
-    // Aquí irás a la pantalla de edición
-  }
+
+
 
   public eliminarEvento(id: number) {
     console.log("Eliminar evento ID:", id);
     // Aquí abrirás el diálogo de confirmación
   }
+  public editarEvento(id: number) {
+    console.log("Editar evento ID:", id);
+    // Aquí navegarás al formulario de edición
+    this.router.navigate([`/dashboard/editar-evento/${id}`]);
+  }
+
+   public regresar() { 
+    this.location.back(); 
+  }
+
 
 
 }

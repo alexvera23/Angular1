@@ -120,7 +120,9 @@ private loadAlumnos(): void {
     eliminarUsuario(id: string, username: string): void {
     const dialogData: ConfirmDialogData = {
       title: 'Confirmar eliminación',
-      mesage: `¿Estás seguro de que deseas eliminar al administrador <strong>${username}</strong>? Esta acción no se puede deshacer.`
+      mesage: `¿Estás seguro de que deseas eliminar al administrador <strong>${username}</strong>? Esta acción no se puede deshacer.`,
+      confirmText: 'Eliminar',
+      confirmColor: 'warn'
     };
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '400px',

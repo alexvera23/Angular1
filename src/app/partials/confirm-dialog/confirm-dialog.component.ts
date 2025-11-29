@@ -6,6 +6,8 @@ import { MATERIAL_MODULES } from '../../shared/shared-material';
 export interface ConfirmDialogData { 
   title: string;
   mesage: string;
+  confirmText: string;
+  confirmColor?: 'warn' | 'primary' | 'accent';
   
   }
 

@@ -1,6 +1,13 @@
 <h2 mat-dialog-title>{{ data.title }}</h2>
-<mat-dialog-content [innerHTML]="data.mesage"></mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close cdkFocusInitial>Cancel</button>
-  <button mat-button color="warn" [mat-dialog-close]="true" cdkFocusInitial>Eliminar</button>
-</mat-dialog-actions>
+    <mat-dialog-content [innerHTML]="data.mesage"></mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button [matDialogClose]="false">Cancelar</button>
+      
+      <!-- Usamos las propiedades dinámicas o valores por defecto -->
+      <button mat-button 
+              [color]="data.confirmColor || 'warn'" 
+              [matDialogClose]="true" 
+              cdkFocusInitial>
+        {{ data.confirmText || 'Eliminar' }}
+      </button>
+    </mat-dialog-actions>

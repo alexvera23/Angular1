@@ -6,8 +6,9 @@ import { UserDataService } from '../../services/user-data.service';
 import { FacadeService } from '../../services/facade.service';
 import { forkJoin } from 'rxjs'; // Para unir peticiones
 import { EventosService } from '../../services/eventos.service';
-import { Router } from '@angular/router';
-
+import { ActivatedRoute,Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../partials/confirm-dialog/confirm-dialog.component';
 @Component({
   selector: 'app-registro-evento',
   standalone: true,
@@ -22,10 +23,15 @@ export class RegistroEventoComponent implements OnInit {
  private location = inject(Location);
  private eventosService = inject(EventosService);
  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private dialog = inject(MatDialog);
 
   public formEvento: FormGroup;
   public listaResponsables: any[] = [];
   public showProgramaEducativo: boolean = false;
+  public editar: boolean = false;
+  public eventoId: number | null = null;
+  public pageTitle: string = "Registro de Evento";
 
   // Opciones estáticas
   public tiposEvento = ['Conferencia', 'Taller', 'Seminario', 'Concurso'];
@@ -73,6 +79,45 @@ export class RegistroEventoComponent implements OnInit {
   ngOnInit(): void {
     this.cargarResponsables();
     this.detectarCambiosPublico();
+    this.route.paramMap.subscribe(params => {
+      const idParam = params.get('id');
+      if (idParam) {
+        this.editar = true;
+        this.eventoId = +idParam;
+        this.pageTitle = 'Editar Evento';
+        this.cargarDatosEvento(this.eventoId);
+      }
+    });
+  }
+  // --- Cargar Datos para Edición ---
+  cargarDatosEvento(id: number) {
+    this.eventosService.getEventoById(id).subscribe({
+      next: (data) => {
+        console.log('Datos del evento a editar:', data);
+        // Mapear datos al formulario
+        this.formEvento.patchValue({
+          nombre: data.nombre,
+          tipo: data.tipo,
+          lugar: data.lugar,
+          descripcion: data.descripcion,
+          cupo: data.cupo,
+          responsable: data.responsable,
+          programa: data.programa_educativo,
+          fecha: new Date(data.fecha+'T00:00:00'), // Asegura formato correcto
+          horaInicio: data.hora_inicio.substring(0,5),
+          horaFin: data.hora_fin.substring(0,5),
+          publico: {
+            estudiantes: data.publico.estudiantes,
+            profesores: data.publico.profesores,
+            publico_general: data.publico.publico_general
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error al cargar datos del evento:', err);
+        this.facadeService.openSnackBar('Error al cargar los datos del evento para edición.', 'OK');
+      }
+    });
   }
 
   // --- Carga de Usuarios (Admins + Maestros) ---
@@ -122,60 +167,57 @@ export class RegistroEventoComponent implements OnInit {
   }
 
   public registrar() {
-    if (this.formEvento.invalid) {
-      this.facadeService.openSnackBar('Revisa los campos marcados en rojo', 'Cerrar');
+     if (this.formEvento.invalid) {
       this.formEvento.markAllAsTouched();
       return;
     }
 
-    // Validar Horario
-    const inicio = this.formEvento.get('horaInicio')?.value;
-    const fin = this.formEvento.get('horaFin')?.value;
-    if (inicio >= fin) {
-      this.facadeService.openSnackBar('La hora de inicio debe ser menor a la hora de fin', 'Cerrar');
-      return;
-    }
-
-    // --- PREPARAR DATOS PARA ENVÍO ---
-    // 1. Obtenemos los valores del formulario
+    // 1. Preparar datos (igual que antes)
     const formValues = this.formEvento.value;
-
-    // 2. Creamos un nuevo objeto con los nombres EXACTOS que Django espera
-    const datosParaEnviar: any = {
-      ...formValues, // Copiamos nombre, tipo, lugar, descripcion, cupo, responsable, publico...
-      
-      // Traducimos los campos que no coinciden
-      hora_inicio: formValues.horaInicio,
+    const datosParaEnviar = {
+      ...formValues,
+      hora_inicio: formValues.horaInicio, 
       hora_fin: formValues.horaFin,
       programa_educativo: formValues.programa,
-
-      // Conversión de Fecha (si existe)
       fecha: formValues.fecha ? new Date(formValues.fecha).toISOString().split('T')[0] : null
     };
+    delete datosParaEnviar.horaInicio; delete datosParaEnviar.horaFin; delete datosParaEnviar.programa;
 
-    // Eliminamos los campos viejos que Django no entiende (opcional, pero limpio)
-    delete datosParaEnviar.horaInicio;
-    delete datosParaEnviar.horaFin;
-    delete datosParaEnviar.programa;
-
-    // --- LLAMADA AL SERVICIO ---
-    // ¡IMPORTANTE! Envía 'datosParaEnviar', NO 'this.formEvento.value'
-    this.eventosService.registrarEvento(datosParaEnviar).subscribe({
-      next: (response) => {
-        console.log('Evento registrado:', response);
-        this.facadeService.openSnackBar('Evento registrado exitosamente', 'OK');
-        this.formEvento.reset();
-        this.router.navigate(['/dashboard/registrar-evento']);
-      },
-      error: (error) => {
-        console.error('Error al registrar:', error);
-        let mensaje = 'Ocurrió un error al registrar el evento';
-        if (error.error) {
-           mensaje += ': ' + JSON.stringify(error.error);
+    // 2. DECIDIR: ¿EDITAR O CREAR?
+    if (this.editar && this.eventoId) {
+      
+      // --- LÓGICA DE EDICIÓN CON CONFIRMACIÓN ---
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: 'Confirmar Cambios',
+          message: '¿Estás seguro de actualizar los datos de este evento?',
+          confirmText: 'Actualizar',
+          confirmColor: 'primary' // Botón Azul
         }
-        this.facadeService.openSnackBar(mensaje, 'Cerrar');
-      }
-    });
+      });
+
+      dialogRef.afterClosed().subscribe(confirmado => {
+        if (confirmado) {
+          this.eventosService.updateEvento(this.eventoId!, datosParaEnviar).subscribe({
+            next: () => {
+              this.facadeService.openSnackBar('Evento actualizado', 'OK');
+              this.router.navigate(['/dashboard/eventos']);
+            },
+            error: () => this.facadeService.openSnackBar('Error al actualizar', 'Cerrar')
+          });
+        }
+      });
+
+    } else {
+      // --- LÓGICA DE CREACIÓN (La que ya tenías) ---
+      this.eventosService.registrarEvento(datosParaEnviar).subscribe({
+        next: () => {
+          this.facadeService.openSnackBar('Evento registrado', 'OK');
+          this.router.navigate(['/dashboard/eventos']); // Ir a la lista
+        },
+        error: () => this.facadeService.openSnackBar('Error al registrar', 'Cerrar')
+      });
+    }
   }
 
  public regresar() {
