@@ -1,0 +1,80 @@
+// Heredamos estilos base si tienes un styles.scss global, 
+// pero definimos específicos aquí.
+
+.eventos-dashboard {
+  padding: 2rem;
+  
+  mat-card {
+    max-width: 100%; // Usar todo el ancho disponible ya que son muchas columnas
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  mat-card-header {
+    background-color: #f5f5f5;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+
+    mat-card-title {
+      color: #23395d; // Tu color corporativo
+      font-weight: 600;
+      font-size: 1.4rem;
+    }
+  }
+
+  .table-container {
+    overflow-x: auto; // CRUCIAL: Permite scroll horizontal
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.12);
+    
+    table {
+      width: 100%;
+      min-width: 1200px; // Forzar ancho mínimo para que las columnas no se aplasten
+    }
+  }
+}
+
+// Estilos para las etiquetas de Tipo de Evento
+.badge-tipo {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  &.conferencia {
+    background-color: #e3f2fd;
+    color: #1565c0;
+  }
+  &.taller {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+  &.seminario {
+    background-color: #fff3e0;
+    color: #ef6c00;
+  }
+  &.concurso {
+    background-color: #fce4ec;
+    color: #c2185b;
+  }
+}
+
+// Ajustes de chips
+mat-chip-listbox {
+  display: flex;
+  gap: 4px;
+}
+mat-chip-option {
+  min-height: 24px !important;
+  font-size: 0.75rem !important;
+}
+
+// Ajustes responsivos
+@media (max-width: 768px) {
+  .eventos-dashboard {
+    padding: 1rem;
+  }
+}

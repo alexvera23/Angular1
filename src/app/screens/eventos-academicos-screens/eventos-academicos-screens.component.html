@@ -1,1 +1,146 @@
-<p>eventos-academicos-screens works!</p>
+<div class="eventos-dashboard">
+  <mat-card>
+    
+    <!-- Encabezado Dinámico con ngSwitch -->
+    <div [ngSwitch]="userRole">
+
+      <!-- CASO 1: Si es un Administrador -->
+      <mat-card-header *ngSwitchCase="'administrador'">
+        <img mat-card-avatar src="assets/images/fcc_logo.png" alt="Avatar" class="admin-avatar" />
+        <mat-card-title>Panel de Administrador</mat-card-title>
+        <mat-card-subtitle>
+          Vista: <strong>Gestión de Eventos</strong> (Usuario: {{ username }})
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <!-- CASO 2: Si es un Maestro -->
+      <mat-card-header *ngSwitchCase="'maestro'">
+        <img mat-card-avatar src="assets/images/fcc_logo.png" alt="Avatar" class="admin-avatar" />
+        <mat-card-title>Panel de Maestro</mat-card-title>
+        <mat-card-subtitle>
+          Vista: <strong>Lista de Eventos</strong> (Usuario: {{ username }})
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <!-- CASO 3: Si es un Alumno -->
+      <mat-card-header *ngSwitchCase="'alumno'">
+        <img mat-card-avatar src="assets/images/fcc_logo.png" alt="Avatar" class="admin-avatar" />
+        <mat-card-title>Portal del Alumno</mat-card-title>
+        <mat-card-subtitle>
+          Vista: <strong>Eventos Disponibles</strong> (Usuario: {{ username }})
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <!-- CASO DEFAULT (Opcional, por si acaso) -->
+      <mat-card-header *ngSwitchDefault>
+        <mat-card-title>Gestión de Eventos Académicos</mat-card-title>
+        <mat-card-subtitle>Visualice y administre todos los eventos registrados</mat-card-subtitle>
+      </mat-card-header>
+
+    </div>
+
+    <mat-card-content>
+      
+      <!-- Filtro de Búsqueda -->
+      <mat-form-field appearance="outline" class="w-100 mb-3 mt-3">
+        <mat-label>Buscar Evento...</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Ej. Conferencia, Auditorio, Nombre...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <div class="mat-elevation-z4 table-container">
+        <table mat-table [dataSource]="dataSource" matSort>
+
+          <!-- ID -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+          </ng-container>
+
+          <!-- Nombre -->
+          <ng-container matColumnDef="nombre">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre del Evento </th>
+            <td mat-cell *matCellDef="let element"> 
+              <strong>{{element.nombre}}</strong>
+              <!-- Mostramos descripción como tooltip o texto pequeño si se desea -->
+            </td>
+          </ng-container>
+
+          <!-- Tipo -->
+          <ng-container matColumnDef="tipo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipo </th>
+            <td mat-cell *matCellDef="let element"> 
+              <span class="badge-tipo" [ngClass]="element.tipo | lowercase">{{element.tipo}}</span>
+            </td>
+          </ng-container>
+
+          <!-- Fecha -->
+          <ng-container matColumnDef="fecha">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha </th>
+            <td mat-cell *matCellDef="let element"> {{element.fecha | date:'dd/MM/yyyy'}} </td>
+          </ng-container>
+
+          <!-- Horario (Combinado) -->
+          <ng-container matColumnDef="horario">
+            <th mat-header-cell *matHeaderCellDef> Horario </th>
+            <td mat-cell *matCellDef="let element" style="white-space: nowrap;"> 
+              {{element.hora_inicio}} - {{element.hora_fin}} 
+            </td>
+          </ng-container>
+
+          <!-- Lugar -->
+          <ng-container matColumnDef="lugar">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Lugar </th>
+            <td mat-cell *matCellDef="let element"> {{element.lugar}} </td>
+          </ng-container>
+
+          <!-- Responsable -->
+          <ng-container matColumnDef="responsable">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Responsable </th>
+            <td mat-cell *matCellDef="let element"> 
+              <!-- Usamos el campo extra que añadimos al serializer, o fallback al ID -->
+              {{ element.responsable_nombre ? element.responsable_nombre : 'ID: ' + element.responsable }}
+            </td>
+          </ng-container>
+
+          <!-- Público (Chips) -->
+          <ng-container matColumnDef="publico">
+            <th mat-header-cell *matHeaderCellDef> Dirigido a </th>
+            <td mat-cell *matCellDef="let element">
+              <mat-chip-listbox>
+                <mat-chip-option *ngIf="element.publico_estudiantes" color="accent" selected>Est.</mat-chip-option>
+                <mat-chip-option *ngIf="element.publico_profesores" color="primary" selected>Prof.</mat-chip-option>
+                <mat-chip-option *ngIf="element.publico_general" selected>Gral.</mat-chip-option>
+              </mat-chip-listbox>
+            </td>
+          </ng-container>
+
+          <!-- Cupo -->
+          <ng-container matColumnDef="cupo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Cupo </th>
+            <td mat-cell *matCellDef="let element"> {{element.cupo}} </td>
+          </ng-container>
+
+          <!-- Acciones -->
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef> Acciones </th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button color="primary" (click)="editarEvento(element.id)" matTooltip="Editar Evento">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="eliminarEvento(element.id)" matTooltip="Eliminar Evento">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>
