@@ -35,6 +35,20 @@
   }
 }
 
+mat-card-content{
+    padding: 1rem 1.5rem;
+    p{
+        margin-bottom: 1.5rem;
+        color: var(--text-main, #222)
+    }
+    h3{
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--sidebar-bg, #23395d);
+        margin-bottom: 1rem;
+    }
+}
+
 // Estilos para las etiquetas de Tipo de Evento
 .badge-tipo {
   padding: 4px 8px;

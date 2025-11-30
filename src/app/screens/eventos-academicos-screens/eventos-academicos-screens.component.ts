@@ -73,8 +73,30 @@ export class EventosAcademicosScreensComponent implements OnInit, AfterViewInit 
   public obtenerEventos() {
     this.eventosService.obtenerEventos().subscribe({
       next: (data) => {
-        this.dataSource.data = data;
-        console.log("Eventos cargados:", data);
+        // --- LÓGICA DE FILTRADO POR ROL ---
+        
+        let eventosFiltrados = [];
+
+        if (this.userRole === 'administrador') {
+          // El Admin ve TODO
+          eventosFiltrados = data;
+        } 
+        else if (this.userRole === 'maestro') {
+          // El Maestro ve: Profesores OR Público General
+          eventosFiltrados = data.filter((evento: any) => 
+            evento.publico_profesores === true || evento.publico_general === true
+          );
+        } 
+        else if (this.userRole === 'alumno') {
+          // El Alumno ve: Estudiantes OR Público General
+          eventosFiltrados = data.filter((evento: any) => 
+            evento.publico_estudiantes === true || evento.publico_general === true
+          );
+        }
+
+        // Asignamos la data YA filtrada a la tabla
+        this.dataSource.data = eventosFiltrados;
+        console.log("Eventos cargados (filtrados por rol):", eventosFiltrados);
       },
       error: (error) => {
         console.error(error);

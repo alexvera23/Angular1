@@ -1,7 +1,7 @@
 <div class="eventos-dashboard">
   <mat-card>
     
-    <!-- Encabezado Dinámico con ngSwitch -->
+
     <div [ngSwitch]="userRole">
 
       <!-- CASO 1: Si es un Administrador -->
@@ -40,6 +40,8 @@
     </div>
 
     <mat-card-content>
+        <p> Bienvenido desde aquí puedes ver los eventos disponibles</p>
+        <h3 class="mt-3">Lista de eventos registrados</h3>
       
       <!-- Filtro de Búsqueda -->
       <mat-form-field appearance="outline" class="w-100 mb-3 mt-3">
