@@ -33,45 +33,26 @@ export class RegistroEventoComponent implements OnInit {
   public eventoId: number | null = null;
   public pageTitle: string = "Registro de Evento";
 
-  // Opciones estáticas
+  
   public tiposEvento = ['Conferencia', 'Taller', 'Seminario', 'Concurso'];
   public programasEducativos = ['Ingeniería en Ciencias de la Computación', 'Licenciatura en Ciencias de la Computación', 'Ingeniería en Tecnologías de la Información'];
 
   constructor() {
     this.formEvento = this.fb.group({
-      // 1. Nombre: Letras, números y espacios
       nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ ]*$/)]],
-      
-      // 2. Tipo: Select
       tipo: ['', Validators.required],
-      
-      // 3. Fecha: Datepicker
       fecha: ['', Validators.required],
-      
-      // 4. Horario: Inicio y Fin
       horaInicio: ['', Validators.required],
       horaFin: ['', Validators.required],
-      
-      // 5. Lugar: Alfanumérico
       lugar: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ ]*$/)]],
-      
-      // 6. Público Objetivo (Group)
       publico: this.fb.group({
         estudiantes: [false],
         profesores: [false],
         publico_general: [false]
-      }, { validators: this.atLeastOneCheckboxSelected }), // Validador personalizado
-      
-      // 7. Programa (Condicional)
+      }, { validators: this.atLeastOneCheckboxSelected }),
       programa: [''], 
-      
-      // 8. Responsable
       responsable: ['', Validators.required],
-      
-      // 9. Descripción
       descripcion: ['', Validators.required],
-      
-      // 10. Cupo: Positivo, máx 3 dígitos (1-999)
       cupo: ['', [Validators.required, Validators.min(1), Validators.max(999), Validators.pattern("^[0-9]*$")]]
     });
   }
@@ -89,12 +70,12 @@ export class RegistroEventoComponent implements OnInit {
       }
     });
   }
-  // --- Cargar Datos para Edición ---
+  
   cargarDatosEvento(id: number) {
     this.eventosService.getEventoById(id).subscribe({
       next: (data) => {
         console.log('Datos del evento a editar:', data);
-        // Mapear datos al formulario
+       
         this.formEvento.patchValue({
           nombre: data.nombre,
           tipo: data.tipo,
@@ -120,7 +101,7 @@ export class RegistroEventoComponent implements OnInit {
     });
   }
 
-  // --- Carga de Usuarios (Admins + Maestros) ---
+ 
   cargarResponsables() {
     // Usamos forkJoin para hacer las dos peticiones simultáneas
     forkJoin({
@@ -141,7 +122,6 @@ export class RegistroEventoComponent implements OnInit {
     });
   }
 
-  // --- Lógica Condicional para "Estudiantes" ---
   detectarCambiosPublico() {
     this.formEvento.get('publico')?.valueChanges.subscribe(valores => {
       this.showProgramaEducativo = valores.estudiantes;
@@ -158,10 +138,10 @@ export class RegistroEventoComponent implements OnInit {
     });
   }
 
-  // --- Validador Personalizado para Checkboxes ---
+  
   atLeastOneCheckboxSelected(group: AbstractControl): { [key: string]: any } | null {
     const controls = group.value;
-    // Revisa si al menos uno es true
+    
     const isAtLeastOneSelected = Object.keys(controls).some(key => controls[key] === true);
     return isAtLeastOneSelected ? null : { 'requireOneCheckbox': true };
   }
@@ -172,7 +152,7 @@ export class RegistroEventoComponent implements OnInit {
       return;
     }
 
-    // 1. Preparar datos (igual que antes)
+    
     const formValues = this.formEvento.value;
     const datosParaEnviar = {
       ...formValues,
@@ -183,10 +163,10 @@ export class RegistroEventoComponent implements OnInit {
     };
     delete datosParaEnviar.horaInicio; delete datosParaEnviar.horaFin; delete datosParaEnviar.programa;
 
-    // 2. DECIDIR: ¿EDITAR O CREAR?
+   
     if (this.editar && this.eventoId) {
       
-      // --- LÓGICA DE EDICIÓN CON CONFIRMACIÓN ---
+      
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
           title: 'Confirmar Cambios',
@@ -209,7 +189,7 @@ export class RegistroEventoComponent implements OnInit {
       });
 
     } else {
-      // --- LÓGICA DE CREACIÓN (La que ya tenías) ---
+      
       this.eventosService.registrarEvento(datosParaEnviar).subscribe({
         next: () => {
           this.facadeService.openSnackBar('Evento registrado', 'OK');
