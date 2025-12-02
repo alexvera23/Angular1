@@ -1,1 +1,197 @@
-<p>graficas-screen works!</p>
+<div class="graficas-dashboard">
+  <mat-card>
+    <!-- Encabezado según el rol -->
+    <mat-card-header>
+      <img mat-card-avatar src="assets/images/fcc_logo.png" alt="Avatar" class="admin-avatar" />
+      <mat-card-title>Panel de Estadísticas</mat-card-title>
+      <mat-card-subtitle>
+        Usuario: <strong>{{ username }}</strong> | Visualización de datos del sistema
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Loader mientras carga -->
+      <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner></mat-spinner>
+        <p>Cargando datos estadísticos...</p>
+      </div>
+
+      <!-- Contenido principal -->
+      <div *ngIf="!isLoading">
+        <!-- Tarjetas de resumen -->
+        <div class="stats-cards">
+          <mat-card class="stat-card usuarios">
+            <mat-card-content>
+              <div class="stat-icon">
+                <mat-icon>people</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h3>{{ totalUsuarios }}</h3>
+                <p>Usuarios Totales</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="stat-card admins">
+            <mat-card-content>
+              <div class="stat-icon">
+                <mat-icon>admin_panel_settings</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h3>{{ chartData.administradores }}</h3>
+                <p>Administradores</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="stat-card maestros">
+            <mat-card-content>
+              <div class="stat-icon">
+                <mat-icon>school</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h3>{{ chartData.maestros }}</h3>
+                <p>Maestros</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="stat-card alumnos">
+            <mat-card-content>
+              <div class="stat-icon">
+                <mat-icon>groups</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h3>{{ chartData.alumnos }}</h3>
+                <p>Alumnos</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="stat-card eventos">
+            <mat-card-content>
+              <div class="stat-icon">
+                <mat-icon>event</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h3>{{ totalEventos }}</h3>
+                <p>Eventos Totales</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- Sección de Gráficas -->
+        <div class="charts-section">
+          <!-- Gráfica de Usuarios -->
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>
+                <mat-icon>person</mat-icon>
+                Distribución de Usuarios
+              </h3>
+              <mat-form-field appearance="outline" class="chart-selector">
+                <mat-label>Tipo de Gráfica</mat-label>
+                <mat-select 
+                  [(value)]="usuariosChartType" 
+                  (selectionChange)="cambiarTipoUsuarios($event.value)">
+                  <mat-option *ngFor="let tipo of tiposGrafica" [value]="tipo.value">
+                    {{ tipo.label }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="chart-wrapper">
+              <canvas baseChart
+                [type]="usuariosChartType"
+                [data]="usuariosChartData"
+                [options]="usuariosChartOptions">
+              </canvas>
+            </div>
+
+            <!-- Detalles adicionales -->
+            <div class="chart-details">
+              <div class="detail-item">
+                <span class="color-box" style="background-color: rgba(54, 162, 235, 0.6);"></span>
+                <span>Administradores: <strong>{{ chartData.administradores }}</strong></span>
+              </div>
+              <div class="detail-item">
+                <span class="color-box" style="background-color: rgba(75, 192, 192, 0.6);"></span>
+                <span>Maestros: <strong>{{ chartData.maestros }}</strong></span>
+              </div>
+              <div class="detail-item">
+                <span class="color-box" style="background-color: rgba(255, 206, 86, 0.6);"></span>
+                <span>Alumnos: <strong>{{ chartData.alumnos }}</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráfica de Eventos -->
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>
+                <mat-icon>event_note</mat-icon>
+                Eventos por Público Objetivo
+              </h3>
+              <mat-form-field appearance="outline" class="chart-selector">
+                <mat-label>Tipo de Gráfica</mat-label>
+                <mat-select 
+                  [(value)]="eventosChartType" 
+                  (selectionChange)="cambiarTipoEventos($event.value)">
+                  <mat-option *ngFor="let tipo of tiposGrafica" [value]="tipo.value">
+                    {{ tipo.label }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="chart-wrapper">
+              <canvas baseChart
+                [type]="eventosChartType"
+                [data]="eventosChartData"
+                [options]="eventosChartOptions">
+              </canvas>
+            </div>
+
+            <!-- Detalles adicionales -->
+            <div class="chart-details">
+              <div class="detail-item">
+                <span class="color-box" style="background-color: rgba(255, 99, 132, 0.6);"></span>
+                <span>Para Estudiantes: <strong>{{ chartData.eventosEstudiantes }}</strong></span>
+              </div>
+              <div class="detail-item">
+                <span class="color-box" style="background-color: rgba(54, 162, 235, 0.6);"></span>
+                <span>Para Profesores: <strong>{{ chartData.eventosProfesores }}</strong></span>
+              </div>
+              <div class="detail-item">
+                <span class="color-box" style="background-color: rgba(255, 206, 86, 0.6);"></span>
+                <span>Público General: <strong>{{ chartData.eventosGeneral }}</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información adicional -->
+        <mat-card class="info-card">
+          <mat-card-content>
+            <h3>
+              <mat-icon>info</mat-icon>
+              Información sobre las Estadísticas
+            </h3>
+            <p>
+              Las gráficas se actualizan automáticamente con los datos más recientes del sistema.
+              Puedes cambiar el tipo de visualización utilizando los selectores en cada gráfica.
+            </p>
+            <ul>
+              <li><strong>Barras:</strong> Ideal para comparar cantidades entre categorías</li>
+              <li><strong>Histograma (Líneas):</strong> Muestra tendencias de manera visual</li>
+              <li><strong>Circular:</strong> Representa proporciones del total</li>
+              <li><strong>Dona:</strong> Similar a circular pero con centro vacío para mejor legibilidad</li>
+            </ul>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
