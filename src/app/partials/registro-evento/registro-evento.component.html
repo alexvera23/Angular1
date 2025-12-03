@@ -111,14 +111,20 @@
       </mat-form-field>
 
       <div class="d-flex justify-content-end mt-4">
-      <button mat-raised-button color="warn" type="button" (click)="regresar()">
-            <mat-icon>arrow_back</mat-icon>
-            Cancelar
-          </button>
-      <!-- Texto del botón dinámico -->
-      <button mat-raised-button color="primary" type="submit">
-        {{ editar ? 'Actualizar' : 'Registrar' }}
-      </button>
+        <button mat-raised-button color="warn" type="button" (click)="regresar()">
+          <mat-icon>arrow_back</mat-icon>
+          Cancelar
+        </button>
+
+        
+        <button *ngIf="editar" mat-raised-button color="primary" type="submit">
+          Actualizar
+        </button>
+
+        
+        <button *ngIf="!editar" mat-raised-button color="primary" type="submit">
+          Registrar
+        </button>
       </div>
 
     </form>

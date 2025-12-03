@@ -54,10 +54,10 @@ export class NavbarUserComponent implements OnInit {
   private facadeService = inject(FacadeService);
 
   constructor() {
-    // Inicializar datos del usuario desde el token
+    // Inicializar datos del usuario, se obtienen desde el token :)
     this.initializeUserData();
     
-    // Listener para cambios de tamaño de ventana
+    
     window.addEventListener('resize', () => {
       this.isMobileView = window.innerWidth <= 992;
       if (!this.isMobileView) {
@@ -65,18 +65,17 @@ export class NavbarUserComponent implements OnInit {
       }
     });
 
-    // Aplicar tema claro por defecto
+    
     this.applyPalette('light');
   }
 
   ngOnInit(): void {
-    // Verificar que el usuario esté autenticado
     if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/login']);
     }
   }
 
-  // Inicializa los datos del usuario desde el token
+  
   private initializeUserData(): void {
     const username = this.authService.getUsername();
     const role = this.authService.getUserRole();
@@ -91,13 +90,13 @@ export class NavbarUserComponent implements OnInit {
     this.userRole = role || '';
   }
 
-// Cambia entre modo claro y oscuro
+
   togglePalette(): void {
     this.paletteMode = this.paletteMode === 'light' ? 'dark' : 'light';
     this.applyPalette(this.paletteMode);
   }
 
-  // Aplica la paleta de colores seleccionada
+ 
   private applyPalette(mode: 'light' | 'dark'): void {
     const palette = this.colorPalettes[mode];
     Object.keys(palette).forEach(key => {
@@ -175,7 +174,7 @@ export class NavbarUserComponent implements OnInit {
     return this.isAdmin() || this.isTeacher();
   }
 
-  // Obtiene el nombre del rol para mostrar en la interfaz
+
   getRoleName(): string {
     switch(this.userRole) {
       case 'administrador':

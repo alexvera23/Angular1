@@ -26,7 +26,7 @@ import {
   DoughnutController
 } from 'chart.js';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-// Registrar todos los componentes necesarios de Chart.js
+
 Chart.register(
   CategoryScale,
   LinearScale,
@@ -70,7 +70,7 @@ export class GraficasScreenComponent implements OnInit {
   public userRole: string | null = null;
   public isLoading = true;
 
-  // Tipos de gráfica disponibles
+
   public tiposGrafica = [
     { value: 'bar', label: 'Barras' },
     { value: 'line', label: 'Histograma (Líneas)' },
@@ -88,7 +88,7 @@ export class GraficasScreenComponent implements OnInit {
     eventosGeneral: 0
   };
 
-  // ==================== CONFIGURACIÓN GRÁFICA DE USUARIOS ====================
+
   public usuariosChartType: ChartType = 'bar';
   
   public usuariosChartData: ChartConfiguration['data'] = {
@@ -139,7 +139,7 @@ export class GraficasScreenComponent implements OnInit {
     }
   };
 
-  // ==================== CONFIGURACIÓN GRÁFICA DE EVENTOS ====================
+
   public eventosChartType: ChartType = 'pie';
   
   public eventosChartData: ChartConfiguration['data'] = {
@@ -199,12 +199,12 @@ export class GraficasScreenComponent implements OnInit {
       this.eventosService.obtenerEventos().toPromise()
     ])
       .then(([admins, maestros, alumnos, eventos]) => {
-        // Contar usuarios por rol
+       
         this.chartData.administradores = admins?.length || 0;
         this.chartData.maestros = maestros?.length || 0;
         this.chartData.alumnos = alumnos?.length || 0;
 
-        // Contar eventos por tipo de público
+       
         if (eventos) {
           this.chartData.eventosEstudiantes = eventos.filter(
             (e: any) => e.publico_estudiantes
@@ -217,7 +217,7 @@ export class GraficasScreenComponent implements OnInit {
           ).length;
         }
 
-        // Actualizar datos de las gráficas
+        
         this.actualizarGraficas();
         this.isLoading = false;
       })
@@ -228,32 +228,32 @@ export class GraficasScreenComponent implements OnInit {
       });
   }
 
-  // Actualizar datos de las gráficas
+  
   private actualizarGraficas(): void {
-    // Actualizar gráfica de usuarios
+    
     this.usuariosChartData.datasets[0].data = [
       this.chartData.administradores,
       this.chartData.maestros,
       this.chartData.alumnos
     ];
 
-    // Actualizar gráfica de eventos
+    
     this.eventosChartData.datasets[0].data = [
       this.chartData.eventosEstudiantes,
       this.chartData.eventosProfesores,
       this.chartData.eventosGeneral
     ];
 
-    // Forzar actualización de las gráficas
+    
     this.usuariosChartData = { ...this.usuariosChartData };
     this.eventosChartData = { ...this.eventosChartData };
   }
 
-  // Cambiar tipo de gráfica de usuarios
+ 
   public cambiarTipoUsuarios(tipo: ChartType): void {
     this.usuariosChartType = tipo;
     
-    // Ajustar opciones según el tipo de gráfica
+    
     if (tipo === 'bar' || tipo === 'line') {
       this.usuariosChartOptions = {
         ...this.usuariosChartOptions,
@@ -267,17 +267,17 @@ export class GraficasScreenComponent implements OnInit {
         }
       };
     } else {
-      // Para pie y doughnut no se usan scales
+      
       const { scales, ...optionsSinScales } = this.usuariosChartOptions as any;
       this.usuariosChartOptions = optionsSinScales;
     }
   }
 
-  // Cambiar tipo de gráfica de eventos
+  
   public cambiarTipoEventos(tipo: ChartType): void {
     this.eventosChartType = tipo;
     
-    // Ajustar opciones según el tipo de gráfica
+    
     if (tipo === 'bar' || tipo === 'line') {
       this.eventosChartOptions = {
         ...this.eventosChartOptions,
@@ -291,7 +291,7 @@ export class GraficasScreenComponent implements OnInit {
         }
       };
     } else {
-      // Para pie y doughnut no se usan scales
+      
       const { scales, ...optionsSinScales } = this.eventosChartOptions as any;
       this.eventosChartOptions = optionsSinScales;
     }

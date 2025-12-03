@@ -216,6 +216,7 @@ export class RegistroProfesoresComponent implements OnInit {
         console.log('Respuesta del servidor:', response);
         this.facadeService.openSnackBar('Registro exitoso', 'ÉXITO');
         this.maestroForm.reset();
+        this.router.navigate(['/login'])
       },
       error: (err) => {
         console.error('Error al registrar el usuario:', err);

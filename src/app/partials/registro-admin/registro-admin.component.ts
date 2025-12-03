@@ -143,8 +143,7 @@ export class RegistroAdminComponent implements OnInit {
         console.log("Usuario registrado con éxito:", response);
         this.facadeService.openSnackBar('Registro exitoso');
         this.adminForm.reset();
-        // Opcional: redirigir a la lista de administradores, preguntar al profe :)
-        // this.router.navigate(['/dashboard/admin']);
+        this.router.navigate(['/login'])
       },
       error: (err) => {
         console.error("Error detallado del backend:", err.error);
