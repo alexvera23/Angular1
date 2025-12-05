@@ -1,27 +1,120 @@
-# Proyecto3
+Sistema de Gestion Academica (SGA) - Frontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.17.
+Este repositorio contiene el codigo fuente del Frontend para el Sistema de Gestion Academica. Es una aplicacion de pagina unica (SPA) desarrollada con Angular y TypeScript, diseñada para interactuar con la API REST del backend. La interfaz de usuario utiliza Angular Material y Bootstrap para garantizar un diseño responsivo y funcional.
 
-## Development server
+Tecnologias Utilizadas
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Framework: Angular (Version mas reciente segun package.json)
 
-## Code scaffolding
+Lenguaje: TypeScript
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Estilos: SCSS (Sass), Bootstrap
 
-## Build
+Componentes UI: Angular Material
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Visualizacion de Datos: Ngx-Charts / Chart.js
 
-## Running unit tests
+Gestion de Paquetes: NPM
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Arquitectura del Proyecto
 
-## Running end-to-end tests
+El codigo fuente se encuentra bajo el directorio src/app y esta organizado por funcionalidad:
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+screens/: Contiene los componentes que representan paginas completas.
 
-## Further help
+login-screen: Pantalla de inicio de sesion.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+home: Pantalla principal o dashboard.
+
+admin, alumno, profesores: Pantallas especificas para la gestion de cada rol.
+
+eventos-academicos-screens: Listado y visualizacion de eventos.
+
+graficas-screen: Visualizacion de metricas y estadisticas del sistema.
+
+partials/: Componentes reutilizables en toda la aplicacion.
+
+registro-*: Formularios modulares para registrar alumnos, administradores, profesores y eventos.
+
+navar-user, sidebar-user: Elementos de navegacion.
+
+confirm-dialog: Modales para confirmacion de acciones.
+
+services/: Capa de comunicacion con el Backend.
+
+auth.service: Manejo de inicio de sesion y almacenamiento de tokens.
+
+facade.service: Patron Facade para simplificar las llamadas a multiples servicios.
+
+*users*.service: Servicios especificos para cada entidad (alumnos, profesores, etc.).
+
+tools/: Servicios de utilidad como validadores personalizados y manejo de errores.
+
+guards/: Proteccion de rutas (AuthGuard) para asegurar que solo usuarios autenticados accedan a secciones privadas.
+
+interceptors/: Interceptor HTTP para adjuntar tokens de autenticacion a las peticiones salientes.
+
+Funcionalidades Principales
+
+1. Autenticacion
+
+Formulario de login seguro.
+
+Persistencia de sesion mediante almacenamiento local (Local Storage).
+
+Redireccion automatica basada en el rol del usuario.
+
+2. Gestion de Usuarios (CRUD)
+
+Interfaces dedicadas para listar, registrar, editar y eliminar Administradores, Profesores y Alumnos.
+
+Formularios reactivos con validaciones en tiempo real (campos requeridos, formatos de correo, matriculas, etc.).
+
+3. Gestion de Eventos
+
+Calendario o lista de eventos academicos.
+
+Formulario para dar de alta nuevos eventos o modificar los existentes.
+
+4. Dashboard y Graficas
+
+Visualizacion grafica de la distribucion de usuarios y datos del sistema.
+
+Integracion con librerias de graficos para mostrar informacion estadistica.
+
+Guia de Instalacion y Ejecucion
+
+Sigue estos pasos para desplegar la aplicacion frontend en tu entorno local.
+
+Prerrequisitos
+
+Node.js (Version LTS recomendada).
+
+Angular CLI instalado globalmente.
+
+Pasos
+
+Navegar a la carpeta del frontend
+
+Instalar dependencias
+Ejecuta el siguiente comando para descargar todas las librerias necesarias listadas en package.json.
+
+npm install
+
+
+Ejecutar el servidor de desarrollo
+
+ng serve
+
+
+O alternativamente:
+
+npm start
+
+
+Acceder a la aplicacion
+Abre tu navegador web y ve a la direccion http://localhost:4200/. La aplicacion se recargara automaticamente si realizas cambios en el codigo fuente.
+
+Configuracion de Entorno
+
+Los archivos de configuracion de entorno se encuentran en src/environments/. Asegurate de que la variable apiUrl o similar apunte a la direccion correcta donde se esta ejecutando tu Backend de Django (por defecto http://127.0.0.1:8000/).
