@@ -165,7 +165,7 @@ export class RegistroAlumnosComponent implements OnInit {
         this.alumnoForm.reset();
         // Restablecer el rol después del reset
         this.alumnoForm.patchValue({ rol: this.rol });
-        this.router.navigate(['/login'])
+        this.router.navigate(['/dashboard'])
       },
       error: (err) => {
         console.error('Error al registrar el usuario:', err);

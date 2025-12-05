@@ -22,6 +22,7 @@ import { MatSortModule } from '@angular/material/sort';
 import {MatDialogModule} from '@angular/material/dialog';
 import { MatMenu, MatMenuModule } from '@angular/material/menu';
 
+
 // Array con todos los módulos de Material
 export const MATERIAL_MODULES = [
   MatFormFieldModule,
@@ -43,7 +44,8 @@ export const MATERIAL_MODULES = [
   MatChipsModule,
   MatSortModule,
   MatDialogModule,
-  MatMenuModule
+  MatMenuModule,
+  MatMenu
 ];
 
 // También puedo exportar módulos individuales por si quiero importarlos de forma específica
@@ -67,5 +69,6 @@ export {
   MatChipsModule,
   MatSortModule,
   MatDialogModule,
-  MatMenuModule
+  MatMenuModule,
+  MatMenu
 };
