@@ -16,9 +16,9 @@
         <p>Cargando datos estadísticos...</p>
       </div>
 
-      <!-- Contenido principal -->
+      
       <div *ngIf="!isLoading">
-        <!-- Tarjetas de resumen -->
+       
         <div class="stats-cards">
           <mat-card class="stat-card usuarios">
             <mat-card-content>
@@ -127,7 +127,7 @@
             </div>
           </div>
 
-          <!-- Gráfica de Eventos -->
+          
           <div class="chart-container">
             <div class="chart-header">
               <h3>
@@ -172,25 +172,7 @@
           </div>
         </div>
 
-        <!-- Información adicional -->
-        <mat-card class="info-card">
-          <mat-card-content>
-            <h3>
-              <mat-icon>info</mat-icon>
-              Información sobre las Estadísticas
-            </h3>
-            <p>
-              Las gráficas se actualizan automáticamente con los datos más recientes del sistema.
-              Puedes cambiar el tipo de visualización utilizando los selectores en cada gráfica.
-            </p>
-            <ul>
-              <li><strong>Barras:</strong> Ideal para comparar cantidades entre categorías</li>
-              <li><strong>Histograma (Líneas):</strong> Muestra tendencias de manera visual</li>
-              <li><strong>Circular:</strong> Representa proporciones del total</li>
-              <li><strong>Dona:</strong> Similar a circular pero con centro vacío para mejor legibilidad</li>
-            </ul>
-          </mat-card-content>
-        </mat-card>
+       
       </div>
     </mat-card-content>
   </mat-card>
