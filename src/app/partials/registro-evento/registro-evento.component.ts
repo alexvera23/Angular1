@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractContro
 import { MATERIAL_MODULES } from '../../shared/shared-material';
 import { UserDataService } from '../../services/user-data.service';
 import { FacadeService } from '../../services/facade.service';
-import { forkJoin } from 'rxjs'; // Para unir peticiones
+import { forkJoin } from 'rxjs'; 
 import { EventosService } from '../../services/eventos.service';
 import { ActivatedRoute,Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';

@@ -33,16 +33,16 @@ export class EventosAcademicosScreensComponent implements OnInit, AfterViewInit 
   public userRole: string | null = null;
   public username: string | null = null;
 
-  // Columnas a mostrar (Todas las solicitadas)
+  
   public displayedColumns: string[] = [
     'id', 
     'nombre', 
     'tipo', 
     'fecha', 
-    'horario', // Combinaremos inicio y fin para ahorrar espacio
+    'horario', 
     'lugar', 
     'responsable', 
-    'publico', // Mostraremos chips para el público
+    'publico', 
     'cupo',
     'acciones'
   ];
@@ -60,7 +60,7 @@ export class EventosAcademicosScreensComponent implements OnInit, AfterViewInit 
       this.displayedColumns= this.displayedColumns.filter(c => c !== 'acciones');
     }
 
-    // Cargar eventos
+    
     this.obtenerEventos();
   }
 
@@ -69,32 +69,32 @@ export class EventosAcademicosScreensComponent implements OnInit, AfterViewInit 
     this.dataSource.sort = this.sort;
   }
 
-  // Obtener lista de eventos del backend
+  
   public obtenerEventos() {
     this.eventosService.obtenerEventos().subscribe({
       next: (data) => {
-        // --- LÓGICA DE FILTRADO POR ROL ---
+        
         
         let eventosFiltrados = [];
 
         if (this.userRole === 'administrador') {
-          // El Admin ve TODO
+          
           eventosFiltrados = data;
         } 
         else if (this.userRole === 'maestro') {
-          // El Maestro ve: Profesores OR Público General
+          
           eventosFiltrados = data.filter((evento: any) => 
             evento.publico_profesores === true || evento.publico_general === true
           );
         } 
         else if (this.userRole === 'alumno') {
-          // El Alumno ve: Estudiantes OR Público General
+          
           eventosFiltrados = data.filter((evento: any) => 
             evento.publico_estudiantes === true || evento.publico_general === true
           );
         }
 
-        // Asignamos la data YA filtrada a la tabla
+       
         this.dataSource.data = eventosFiltrados;
         console.log("Eventos cargados (filtrados por rol):", eventosFiltrados);
       },
@@ -105,7 +105,7 @@ export class EventosAcademicosScreensComponent implements OnInit, AfterViewInit 
     });
   }
 
-  // Filtro de búsqueda
+  
   public applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -124,18 +124,18 @@ export class EventosAcademicosScreensComponent implements OnInit, AfterViewInit 
       data: {
         title: 'Eliminar Evento',
         message: '¿Estás seguro de que deseas eliminar este evento permanentemente?',
-        confirmText: 'Eliminar', // Texto del botón
-        confirmColor: 'warn'    // Color rojo
+        confirmText: 'Eliminar', 
+        confirmColor: 'warn'    
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      // Si result es true (el usuario dio clic en Eliminar)
+      
       if (result) {
         this.eventosService.eliminarEvento(id).subscribe({
           next: () => {
             this.facadeService.openSnackBar('Evento eliminado correctamente', 'OK');
-            // 3. Recargar la lista para que desaparezca de la tabla
+            
             this.obtenerEventos(); 
           },
           error: (err) => {
